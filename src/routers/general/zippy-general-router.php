@@ -41,7 +41,7 @@ class Zippy_General_Router
     register_rest_route(ZIPPY_WASH_API_NAMESPACE, '/zippy-options', array(
       'methods' => 'POST',
       'callback' => [Zippy_Admin_Booking_General_Controller::class, 'update_option_configs'],
-      'args' => Zippy_Api_Booking_Model::update_option_args(),
+      'args' => Zippy_Api_Booking_Model::get_booking_args(),
       'permission_callback' => array(Zippy_wash_Permission::class, 'zippy_permission_callback'),
 
     ));

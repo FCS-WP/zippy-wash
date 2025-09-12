@@ -32,14 +32,14 @@ class ZIPPY_WASH_Permission
     {
         $headers = getallheaders();
 
-        
         $uppercase_headers = [];
         foreach ($headers as $key => $value) {
             $uppercase_headers[ucfirst($key)] = $value;
         }
 
         $token = isset($uppercase_headers['Authorization']) ? trim(str_replace('Bearer', '', $uppercase_headers['Authorization'])) : '';
-        $valid_token = get_option(ZIPPY_BOOKING_API_TOKEN_NAME);
+        // $valid_token = get_option(ZIPPY_BOOKING_API_TOKEN_NAME);
+        $valid_token = ZIPPY_BOOKING_API_TOKEN_NAME;
 
         // Valid Token
         return $token === $valid_token;
