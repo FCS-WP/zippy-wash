@@ -82,14 +82,4 @@ class Zippy_Cart_Handler
   {
     return WC()->cart->get_cart();
   }
-
-  public static function ensure_cart_session() {
-    if ( ! WC()->session ) {
-        wc_load_cart();
-    }
-  
-    if ( ! WC()->cart ) {
-        WC()->cart = new \WC_Cart();
-    }
-  }
 }

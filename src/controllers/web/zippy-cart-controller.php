@@ -18,76 +18,88 @@ use WC_Cart;
 
 class Zippy_Cart_Controller
 {
-    public static function add_to_cart(WP_REST_Request $request) {
-        $products = $request->get_param('products');
+    public static function add_to_cart(WP_REST_Request $request) 
+    {
+        try {
+            $products = $request->get_param('products');
+            if (empty($products) || !is_array($products)) {
+                return Zippy_Response_Handler::error('Products data is required.');
+            }
 
-        if (empty($products)) {
-            return Zippy_Response_Handler::error('Products is required and must be an array.');
-        }
+            $cart_handler = new Zippy_Cart_Handler();
 
-        $zippyCart = new Zippy_Cart_Handler;
+            echo '<pre>Cart before adding:' . PHP_EOL;
+            print_r($cart_handler->get_cart_items());
+            echo '</pre>';
 
-        foreach ($products as $product) {
-            $found = false;
-            $productId = $product['id'];
-            $productQty = $product['qty'];
-            foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-                if ($cart_item['product_id'] == $productId) {
-                    $new_qty = $cart_item['quantity'] + $productQty;
-                    $zippyCart->update_cart_item($cart_item_key, $new_qty);
-                    $found = true;
-                    break;
+            $added_items = [];
+            foreach ($products as $product) {
+                $product_id = isset($product['id']) ? intval($product['id']) : 0;
+                $quantity   = isset($product['qty']) ? intval($product['qty']) : 1;
+
+                if (!$product_id) continue;
+
+                $cart_item_key = $cart_handler->add_to_cart($product_id, $quantity);
+
+                if ($cart_item_key) {
+                    $added_items[] = [
+                        'product_id'    => $product_id,
+                        'quantity'      => $quantity,
+                        'cart_item_key' => $cart_item_key,
+                    ];
                 }
             }
 
-            if (!$found) {
-                $zippyCart->add_to_cart($productId, $productQty);
-            }
-        }
+            WC()->cart->calculate_totals();
+            WC()->cart->maybe_set_cart_cookies();
 
-        return Zippy_Response_Handler::success([], 'Products added to cart successfully');
+            echo '<pre>Cart after adding:' . PHP_EOL;
+            print_r($cart_handler->get_cart_items());
+            echo '</pre>';
+
+            if (empty($added_items)) {
+                return Zippy_Response_Handler::error('Failed to add products to cart.');
+            }
+
+            return Zippy_Response_Handler::success($added_items, 'Products added to cart successfully');
+
+        } catch (\Exception $e) {
+            return Zippy_Response_Handler::error($e->getMessage());
+        }
     }
+
 
     public static function get_products_in_cart(WP_REST_Request $request) 
     {
         try {
-            global $wpdb;
+            if ( ! class_exists('WC_Session_Handler') ) {
+                return Zippy_Response_Handler::error('WooCommerce classes not loaded.');
+            }
 
-            $cookies = $request->get_header('cookie');
-            $session_key = null;
-
-            if ($cookies && preg_match('/wp_woocommerce_session_[^=]+=([^\s;]+)/', $cookies, $matches)) {
-                $session_value = urldecode($matches[1]);
-                $parts = explode('||', $session_value);
-                if (isset($parts[0])) {
-                    $session_key = $parts[0];
+            $cookie_name = 'wp_woocommerce_session_' . COOKIEHASH;
+            if ( isset($_COOKIE[$cookie_name]) ) {
+                if ( ! WC()->session ) {
+                    WC()->session = new \WC_Session_Handler();
+                    WC()->session->init();
                 }
+            } else {
+                WC()->session = new \WC_Session_Handler();
+                WC()->session->init();
+                WC()->session->set_customer_session_cookie(true);
             }
 
-            if (!$session_key) {
-                return Zippy_Response_Handler::error('No session key found in cookie.');
+            if ( ! WC()->cart ) {
+                wc_load_cart();
             }
 
-            $table = $wpdb->prefix . 'woocommerce_sessions';
-            $row = $wpdb->get_row(
-                $wpdb->prepare("SELECT session_value FROM $table WHERE session_key = %s", $session_key)
-            );
-
-            if (!$row) {
-                return Zippy_Response_Handler::error('Session not found in database.');
+            if ( ! WC()->cart || WC()->cart->is_empty() ) {
+                return Zippy_Response_Handler::success([], 'Cart is empty.');
             }
 
-            $session_data = maybe_unserialize($row->session_value);
-
-            $cart_items_serialized = isset($session_data['cart']) ? $session_data['cart'] : '';
-            $cart_items = maybe_unserialize($cart_items_serialized);
-
-            $products = [];
-            foreach ($cart_items as $cart_item_key => $cart_item) {
-                $product = wc_get_product($cart_item['product_id']);
-                if (!$product) continue;
-
-                $products[] = [
+            $cart_items = [];
+            foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+                $product = $cart_item['data'];
+                $cart_items[] = [
                     'id'              => $product->get_id(),
                     'name'            => $product->get_name(),
                     'price'           => $product->get_price(),
@@ -100,17 +112,10 @@ class Zippy_Cart_Controller
                 ];
             }
 
-            return Zippy_Response_Handler::success($products, 'Fetched cart products from session successfully');
+            return Zippy_Response_Handler::success($cart_items, 'Fetched cart products successfully');
+
         } catch (\Exception $e) {
             return Zippy_Response_Handler::error($e->getMessage());
-        }
-    }
-
-
-    public static function initSession() {
-        if (!WC()->session) {
-            $session = new Zippy_Session_Handler;
-            $session->init_session();
         }
     }
 }
