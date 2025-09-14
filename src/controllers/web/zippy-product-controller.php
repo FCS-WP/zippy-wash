@@ -22,11 +22,16 @@ class Zippy_Product_Controller
     public static function get_products_by_category(WP_REST_Request $request)
     {
         $cat_id = $request->get_param('category_id');
+        $cat_slug = $request->get_param('category_slug');
 
         $args = [];
 
         if (!empty($cat_id)) {
             $args['product_category_id'] = [$cat_id];
+        }
+
+        if (!empty($cat_slug)) {
+            $args['category'] = [$cat_slug];
         }
 
         // Lấy sản phẩm

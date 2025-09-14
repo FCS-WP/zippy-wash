@@ -3,6 +3,7 @@ import { Stack, Typography, CircularProgress, Box } from "@mui/material";
 import ProductItem from "./ProductItem.jsx";
 import { webApi } from "../../api/index.js";
 import Loading from "../common/Loading.jsx";
+import CONSTANTS from "../../constant/constants.js";
 
 export default function ProductList({
   onAddToCart,
@@ -16,6 +17,14 @@ export default function ProductList({
   useEffect(() => {
     getProducts();
   }, [selectedCat, selectedSubCategory]);
+
+  useEffect(() => {
+    setProducts((prevProducts) =>
+      prevProducts.filter(
+        (item) => !item.categories.includes(CONSTANTS.slugCategoryAddOn)
+      )
+    );
+  }, [products]);
 
   const getProducts = async () => {
     try {

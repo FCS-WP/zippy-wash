@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import { webApi } from "../../api";
+import CONSTANTS from "../../constant/constants";
 
 export default function AttachProduct({ products, setProducts }) {
   useEffect(() => {
@@ -18,7 +19,9 @@ export default function AttachProduct({ products, setProducts }) {
 
   const getProducts = async () => {
     try {
-      const data = await webApi.getProducts({ category_id: 23 });
+      const data = await webApi.getProducts({
+        category_slug: CONSTANTS.slugCategoryAddOn,
+      });
       setProducts(data.data.data);
     } catch (error) {
       console.error("Error fetching products:", error);

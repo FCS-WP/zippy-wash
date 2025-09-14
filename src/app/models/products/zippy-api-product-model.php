@@ -24,6 +24,12 @@ class Zippy_Api_Product_Model
           return is_numeric($param);
         }
       ),
+      'category_slug' => array(
+        'required' => false,
+        'validate_callback' => function ($param) {
+          return is_string($param);
+        }
+      ),
     );
   }
 }

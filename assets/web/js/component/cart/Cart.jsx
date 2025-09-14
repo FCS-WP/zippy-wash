@@ -27,12 +27,12 @@ export default function Cart({ cart, setCart, onUpdateQty, onRemove }) {
 
   const placeOrder = async () => {
     try {
-      const productsToSend = [
-        ...cart,
-        ...productAttachs.map((item) => ({ ...item, qty: item.qty || 1 })),
-      ];
+      // const productsToSend = [
+      //   ...cart,
+      //   ...productAttachs.map((item) => ({ ...item, qty: item.qty || 1 })),
+      // ];
 
-      await webApi.addToCart({ products: productsToSend });
+      // await webApi.addToCart({ products: productsToSend });
       window.location.href = "/checkout";
     } catch (error) {
       console.error("Error adding to cart:", error);

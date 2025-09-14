@@ -51,6 +51,8 @@ class Zippy_Cart_Controller
             }
 
             WC()->cart->calculate_totals();
+            WC()->session->save_data();
+            WC()->session->set_customer_session_cookie( true );
             WC()->cart->maybe_set_cart_cookies();
 
             echo '<pre>Cart after adding:' . PHP_EOL;
@@ -114,6 +116,71 @@ class Zippy_Cart_Controller
 
             return Zippy_Response_Handler::success($cart_items, 'Fetched cart products successfully');
 
+        } catch (\Exception $e) {
+            return Zippy_Response_Handler::error($e->getMessage());
+        }
+    }
+
+    public static function decrease_product_quantity(WP_REST_Request $request) 
+    {
+        try {
+            $product_id = $request->get_param('product_id');
+            if (empty($product_id)) {
+                return Zippy_Response_Handler::error('Product ID is required.');
+            }
+
+            if ( ! class_exists('WC_Session_Handler') ) {
+                return Zippy_Response_Handler::error('WooCommerce classes not loaded.');
+            }
+
+            $cart_handler = new Zippy_Cart_Handler();
+            $cart_items = $cart_handler->get_cart_items();
+
+            foreach ( $cart_items as $cart_item_key => $cart_item ) {
+                if ( $cart_item['product_id'] == $product_id ) {
+                    $new_quantity = max(0, $cart_item['quantity'] - 1);
+                    if ($new_quantity === 0) {
+                        $cart_handler->remove_cart_item($cart_item_key);
+                    } else {
+                        $cart_handler->update_cart_item($cart_item_key, $new_quantity);
+                    }
+                    WC()->cart->calculate_totals();
+                    WC()->session->save_data();
+                    return Zippy_Response_Handler::success(null, 'Product quantity updated successfully');
+                }
+            }
+
+            return Zippy_Response_Handler::error('Product not found in cart.');
+        } catch (\Exception $e) {
+            return Zippy_Response_Handler::error($e->getMessage());
+        }
+    }
+
+    public static function remove_product_from_cart(WP_REST_Request $request) 
+    {
+        try {
+            $product_id = $request->get_param('product_id');
+            if (empty($product_id)) {
+                return Zippy_Response_Handler::error('Product ID is required.');
+            }
+
+            if ( ! class_exists('WC_Session_Handler') ) {
+                return Zippy_Response_Handler::error('WooCommerce classes not loaded.');
+            }
+
+            $cart_handler = new Zippy_Cart_Handler();
+            $cart_items = $cart_handler->get_cart_items();
+
+            foreach ( $cart_items as $cart_item_key => $cart_item ) {
+                if ( $cart_item['product_id'] == $product_id ) {
+                    $cart_handler->remove_cart_item($cart_item_key);
+                    WC()->cart->calculate_totals();
+                    WC()->session->save_data();
+                    return Zippy_Response_Handler::success(null, 'Product removed from cart successfully');
+                }
+            }
+
+            return Zippy_Response_Handler::error('Product not found in cart.');
         } catch (\Exception $e) {
             return Zippy_Response_Handler::error($e->getMessage());
         }
