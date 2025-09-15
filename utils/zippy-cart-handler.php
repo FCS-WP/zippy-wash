@@ -50,9 +50,13 @@ class Zippy_Cart_Handler
    */
   public function update_cart_item($cart_item_key, $new_quantity)
   {
-    if (WC()->cart->get_cart_item($cart_item_key)) {
-      WC()->cart->set_quantity($cart_item_key, $new_quantity);
-    }
+      $item = $this->get_cart_items();
+      if (isset($item[$cart_item_key])) {
+        WC()->cart->set_quantity($cart_item_key, $new_quantity, true);
+        return $cart_item_key;
+      }
+
+      return false;
   }
 
   /**
@@ -62,7 +66,13 @@ class Zippy_Cart_Handler
    */
   public function remove_cart_item($cart_item_key)
   {
-    WC()->cart->remove_cart_item($cart_item_key);
+    $item = $this->get_cart_items();
+    if (isset($item[$cart_item_key])) {
+      WC()->cart->remove_cart_item($cart_item_key);
+      return $cart_item_key;
+    }
+
+    return false;
   }
 
   /**
