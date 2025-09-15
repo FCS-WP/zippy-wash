@@ -27,11 +27,6 @@ class Zippy_Cart_Controller
             }
 
             $cart_handler = new Zippy_Cart_Handler();
-
-            echo '<pre>Cart before adding:' . PHP_EOL;
-            print_r($cart_handler->get_cart_items());
-            echo '</pre>';
-
             $added_items = [];
             foreach ($products as $product) {
                 $product_id = isset($product['id']) ? intval($product['id']) : 0;
@@ -52,12 +47,6 @@ class Zippy_Cart_Controller
 
             WC()->cart->calculate_totals();
             WC()->session->save_data();
-            WC()->session->set_customer_session_cookie( true );
-            WC()->cart->maybe_set_cart_cookies();
-
-            echo '<pre>Cart after adding:' . PHP_EOL;
-            print_r($cart_handler->get_cart_items());
-            echo '</pre>';
 
             if (empty($added_items)) {
                 return Zippy_Response_Handler::error('Failed to add products to cart.');
@@ -78,28 +67,9 @@ class Zippy_Cart_Controller
                 return Zippy_Response_Handler::error('WooCommerce classes not loaded.');
             }
 
-            $cookie_name = 'wp_woocommerce_session_' . COOKIEHASH;
-            if ( isset($_COOKIE[$cookie_name]) ) {
-                if ( ! WC()->session ) {
-                    WC()->session = new \WC_Session_Handler();
-                    WC()->session->init();
-                }
-            } else {
-                WC()->session = new \WC_Session_Handler();
-                WC()->session->init();
-                WC()->session->set_customer_session_cookie(true);
-            }
-
-            if ( ! WC()->cart ) {
-                wc_load_cart();
-            }
-
-            if ( ! WC()->cart || WC()->cart->is_empty() ) {
-                return Zippy_Response_Handler::success([], 'Cart is empty.');
-            }
-
+            $cart_handler = new Zippy_Cart_Handler();
             $cart_items = [];
-            foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+            foreach ( $cart_handler->get_cart_items() as $cart_item_key => $cart_item ) {
                 $product = $cart_item['data'];
                 $cart_items[] = [
                     'id'              => $product->get_id(),

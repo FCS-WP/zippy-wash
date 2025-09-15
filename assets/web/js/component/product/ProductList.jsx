@@ -18,14 +18,6 @@ export default function ProductList({
     getProducts();
   }, [selectedCat, selectedSubCategory]);
 
-  useEffect(() => {
-    setProducts((prevProducts) =>
-      prevProducts.filter(
-        (item) => !item.categories.includes(CONSTANTS.slugCategoryAddOn)
-      )
-    );
-  }, [products]);
-
   const getProducts = async () => {
     try {
       setLoading(true);
@@ -38,7 +30,12 @@ export default function ProductList({
       }
 
       const data = await webApi.getProducts(categoryId);
-      setProducts(data.data.data || []);
+
+      const filteredProducts = (data.data.data || []).filter(
+        (item) => !item.categories.includes(CONSTANTS.slugCategoryAddOn)
+      );
+
+      setProducts(filteredProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
       setProducts([]);

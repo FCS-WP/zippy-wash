@@ -84,9 +84,7 @@ use ZIPPY_WASH\Src\Web\ZIPPY_WASH_Web;
  */
 
  Settings::get_instance();
-
  ZIPPY_WASH_Routers::get_instance();
-
  ZIPPY_WASH_Web::get_instance();
  ZIPPY_WASH_Ajax::get_instance();
 
