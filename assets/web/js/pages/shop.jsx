@@ -12,35 +12,70 @@ export default function Shop() {
   const [categories, setCategories] = useState(null);
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
 
-  const handleAddToCart = async (product) => {
+  const handleAddToCart = async (product, qty) => {
     try {
-      // Gửi 1 sản phẩm đang chọn lên backend
-      await webApi.addToCart({ products: [{ ...product, qty: 1 }] });
-      // Cập nhật cart ở frontend nếu muốn
+      const res = await webApi.addToCart({
+        product_id: product.id,
+        qty: qty || 1,
+      });
+      const addedProduct = res?.data?.data?.[0];
       setCart((prev) => {
         const exist = prev.find((item) => item.id === product.id);
         if (exist) {
           return prev.map((item) =>
-            item.id === product.id ? { ...item, qty: item.qty + 1 } : item
+            item.id === product.id
+              ? {
+                  ...item,
+                  qty: item.qty + 1,
+                  cart_item_key: addedProduct?.cart_item_key,
+                }
+              : item
           );
         }
-        return [...prev, { ...product, qty: 1 }];
+        return [
+          ...prev,
+          { ...product, qty: 1, cart_item_key: addedProduct?.cart_item_key },
+        ];
       });
     } catch (error) {
       console.error("Error adding product:", error);
     }
   };
 
-  const handleUpdateQty = (id, qty) => {
+  useEffect(() => {
+    console.log("Cart updated:", cart);
+  }, [cart]);
+
+  const handleUpdateCartItem = async (cart_item_key, qty) => {
+    try {
+      await webApi.updateCartItem({ cart_item_key, qty });
+    } catch (error) {
+      console.error("Error updating cart item:", error);
+    }
+  };
+
+  const handleUpdateQty = (product, qty) => {
+    handleUpdateCartItem(product.cart_item_key, qty);
     setCart((prev) =>
       prev
-        .map((item) => (item.id === id ? { ...item, qty: qty } : item))
+        .map((item) => (item.id === product.id ? { ...item, qty: qty } : item))
         .filter((item) => item.qty > 0)
     );
   };
 
-  const handleRemove = (id) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
+  const handleRemove = (cart_item_key) => {
+    handleRemoveByCartItemKey(cart_item_key);
+    setCart((prev) =>
+      prev.filter((item) => item.cart_item_key !== cart_item_key)
+    );
+  };
+
+  const handleRemoveByCartItemKey = async (cart_item_key) => {
+    try {
+      await webApi.removeCartItem({ cart_item_key });
+    } catch (error) {
+      console.error("Error removing cart item:", error);
+    }
   };
 
   useEffect(() => {

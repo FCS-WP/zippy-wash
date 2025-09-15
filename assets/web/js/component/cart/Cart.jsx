@@ -125,14 +125,14 @@ export default function Cart({ cart, setCart, onUpdateQty, onRemove }) {
               >
                 <IconButton
                   size="small"
-                  onClick={() => onUpdateQty(item.id, item.qty - 1)}
+                  onClick={() => onUpdateQty(item, item.qty - 1)}
                 >
                   <Remove fontSize="small" />
                 </IconButton>
                 <Typography>{item.qty}</Typography>
                 <IconButton
                   size="small"
-                  onClick={() => onUpdateQty(item.id, item.qty + 1)}
+                  onClick={() => onUpdateQty(item, item.qty + 1)}
                 >
                   <Add fontSize="small" />
                 </IconButton>
@@ -147,7 +147,10 @@ export default function Cart({ cart, setCart, onUpdateQty, onRemove }) {
                 <Typography sx={{ textAlign: "right", minWidth: 50 }}>
                   ${item.price * item.qty}
                 </Typography>
-                <IconButton size="small" onClick={() => onRemove(item.id)}>
+                <IconButton
+                  size="small"
+                  onClick={() => onRemove(item.cart_item_key)}
+                >
                   <Delete fontSize="small" />
                 </IconButton>
               </Stack>

@@ -52,5 +52,19 @@ class Zippy_Cart_Router
       'args' => [],
       'permission_callback' => array(ZIPPY_WASH_Permission::class, 'zippy_permission_callback'),
     ));
+
+    register_rest_route(ZIPPY_WASH_API_NAMESPACE, '/zippy-update-quantity-item', array(
+      'methods' => 'POST',
+      'callback' => [Zippy_Cart_Controller::class, 'update_quantity_item'],
+      'args' => Zippy_Api_Cart_Model::get_update_cart_item_args(),
+      'permission_callback' => array(ZIPPY_WASH_Permission::class, 'zippy_permission_callback'),
+    ));
+
+    register_rest_route(ZIPPY_WASH_API_NAMESPACE, '/zippy-remove-cart-item', array(
+      'methods' => 'POST',
+      'callback' => [Zippy_Cart_Controller::class, 'remove_cart_item'],
+      'args' => Zippy_Api_Cart_Model::get_remove_cart_item_args(),
+      'permission_callback' => array(ZIPPY_WASH_Permission::class, 'zippy_permission_callback'),
+    ));
   }
 }

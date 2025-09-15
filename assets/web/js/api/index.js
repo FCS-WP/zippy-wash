@@ -17,10 +17,16 @@ export const webApi = {
     return await makeRequest("/zippy-get-product-in-cart", params, "GET", true);
   },
 
-  async getCartItemsAjax() {
-    const params = new URLSearchParams();
-    params.append("action", "get_product_in_cart");
+  async updateCartItem(params) {
+    return await makeRequest(
+      "/zippy-update-quantity-item",
+      params,
+      "POST",
+      true
+    );
+  },
 
-    return await makeAdminAjaxRequest(params, "POST");
+  async removeCartItem(params) {
+    return await makeRequest("/zippy-remove-cart-item", params, "POST", true);
   },
 };
