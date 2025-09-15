@@ -68,4 +68,37 @@ class Zippy_Api_Cart_Model
           ),
       );
     }
+
+    public static function get_add_products_to_cart_args()
+    {
+        return array(
+            'products' => array(
+                'required' => true,
+                'validate_callback' => function($param, $request, $key) {
+                    if (!is_array($param) || empty($param)) {
+                        return false;
+                    }
+                    foreach ($param as $product) {
+                        if (!isset($product['product_id']) || !is_numeric($product['product_id']) || intval($product['product_id']) <= 0) {
+                            return false;
+                        }
+                        if (isset($product['qty']) && (!is_numeric($product['qty']) || intval($product['qty']) <= 0)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                },
+                'sanitize_callback' => function($param, $request, $key) {
+                    $sanitized = array();
+                    foreach ($param as $product) {
+                        $sanitized_product = array();
+                        $sanitized_product['product_id'] = isset($product['product_id']) ? absint($product['product_id']) : 0;
+                        $sanitized_product['qty'] = isset($product['qty']) ? absint($product['qty']) : 1;
+                        $sanitized[] = $sanitized_product;
+                    }
+                    return $sanitized;
+                },
+            ),
+        );
+    }
 }

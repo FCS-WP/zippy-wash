@@ -1,26 +1,38 @@
 import React from "react";
 import { Button } from "@mui/material";
+import theme from "../../../theme/customTheme";
 
-export default function CategoryItem({ id, name, selectedCat, onSelect }) {
+export default function CategoryItem({
+  id,
+  name,
+  selectedCat,
+  onSelect,
+  bgcolor = theme.palette.primary.main,
+  colorText = theme.palette.text.primary,
+  colorTextHover = theme.palette.text.primary,
+  bgcolorHover = theme.palette.hover.main,
+}) {
   const isSelected = selectedCat === id;
-  const bg = isSelected ? "#F04150" : "transparent";
-  const color = isSelected ? "#fff" : "inherit";
-  const border = isSelected ? "#F04150" : "rgba(0, 0, 0, 0.23)";
+  const bg = isSelected ? theme.palette.primary.mainRed : bgcolor;
+  const colorTextActive = "#ffffff";
 
   return (
     <Button
       variant="outlined"
       onClick={() => onSelect(id)}
       sx={{
-        borderRadius: 2,
-        textTransform: "none",
+        borderRadius: "30px",
+        minWidth: "auto",
+        px: 2,
         bgcolor: bg,
-        color: color,
-        borderColor: border,
-        ":hover, :focus": {
+        color: colorText,
+        ":focus": {
           bgcolor: bg,
-          color: color,
-          borderColor: border,
+          color: colorTextActive,
+        },
+        ":hover": {
+          bgcolor: bgcolorHover,
+          color: colorTextHover,
         },
       }}
     >

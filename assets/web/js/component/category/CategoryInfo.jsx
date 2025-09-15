@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Stack, Typography, Paper, Avatar, Box } from "@mui/material";
 import CategoryItem from "./CategoryItem.jsx";
+import theme from "../../../theme/customTheme.js";
 
 export default function CategoryInfo({
   categories,
@@ -25,6 +26,7 @@ export default function CategoryInfo({
         p: 2,
         borderRadius: 2,
         mb: 3,
+        bgcolor: theme.palette.primary.main,
       }}
     >
       <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -53,15 +55,34 @@ export default function CategoryInfo({
       </Stack>
 
       {category.children && category.children.length > 0 && (
-        <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mt: 2 }}>
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{
+            mt: 2,
+            py: 1,
+            overflowX: "auto",
+            whiteSpace: "nowrap",
+            "&::-webkit-scrollbar": {
+              display: "none",
+            },
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
+        >
           {category.children.map((child) => (
-            <CategoryItem
-              key={child.id}
-              id={child.id}
-              name={child.name}
-              selectedCat={selectedSubCategory}
-              onSelect={onSubCategoryChange}
-            />
+            <Box key={child.id} sx={{ display: "inline-block" }}>
+              <CategoryItem
+                id={child.id}
+                name={child.name}
+                selectedCat={selectedSubCategory}
+                onSelect={onSubCategoryChange}
+                bgcolor={theme.palette.primary.mainGreen}
+                colorText={theme.palette.text.white}
+                colorTextHover={theme.palette.text.white}
+                bgcolorHover={theme.palette.hover.mainGreen}
+              />
+            </Box>
           ))}
         </Stack>
       )}

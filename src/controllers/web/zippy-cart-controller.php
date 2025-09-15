@@ -18,6 +18,9 @@ use WC_Cart;
 
 class Zippy_Cart_Controller
 {
+    /**
+     * Add to Cart (1 product)
+     */
     public static function add_to_cart(WP_REST_Request $request) 
     {
         try {
@@ -28,15 +31,58 @@ class Zippy_Cart_Controller
             }
 
             $cart_handler = new Zippy_Cart_Handler();
-            $added_items = [];
             $cart_item_key = $cart_handler->add_to_cart($product_id, $quantity);
 
-            if ($cart_item_key) {
-                $added_items[] = [
+            if (!empty($cart_item_key)) {
+                $added_item = [
                     'product_id'    => $product_id,
                     'quantity'      => $quantity,
                     'cart_item_key' => $cart_item_key,
                 ];
+            }
+
+            WC()->cart->calculate_totals();
+            WC()->session->save_data();
+
+            if (empty($added_item)) {
+                return Zippy_Response_Handler::error('Failed to add products to cart.');
+            }
+
+            return Zippy_Response_Handler::success($added_item, 'Products added to cart successfully');
+
+        } catch (\Exception $e) {
+            return Zippy_Response_Handler::error($e->getMessage());
+        }
+    }
+
+    /**
+     * Add to Cart (multiple products)
+     */
+    public static function add_products_to_cart(WP_REST_Request $request) 
+    {
+        try {
+            $products = $request->get_param('products');
+            if (empty($products) || !is_array($products)) {
+                return Zippy_Response_Handler::error('Products array is required.');
+            }
+
+            $cart_handler = new Zippy_Cart_Handler();
+            $added_items = [];
+
+            foreach ($products as $product) {
+                $product_id = $product['product_id'] ?? null;
+                $quantity = $product['qty'] ?? 1;
+
+                if ($product_id) {
+                    $cart_item_key = $cart_handler->add_to_cart($product_id, $quantity);
+                    if ($cart_item_key) {
+                        $added_items[] = [
+                            'product_id'    => $product_id,
+                            'quantity'      => $quantity,
+                            'cart_item_key' => $cart_item_key,
+                        ];
+                    }
+                }
             }
 
             WC()->cart->calculate_totals();
@@ -53,6 +99,9 @@ class Zippy_Cart_Controller
         }
     }
 
+    /**
+     * Update quantity of a cart item
+     */
     public static function update_quantity_item(WP_REST_Request $request) 
     {
         try {
@@ -76,6 +125,9 @@ class Zippy_Cart_Controller
     }
 
 
+    /**
+     * Get products in cart
+     */
     public static function get_products_in_cart(WP_REST_Request $request) 
     {
         try {
@@ -108,6 +160,9 @@ class Zippy_Cart_Controller
         }
     }
 
+    /**
+     * Remove a cart item
+     */
     public static function remove_cart_item(WP_REST_Request $request) 
     {
         try {

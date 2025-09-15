@@ -11,6 +11,7 @@ import {
 import { Delete } from "@mui/icons-material";
 import { webApi } from "../../api";
 import CONSTANTS from "../../constant/constants";
+import theme from "../../../theme/customTheme";
 
 export default function AttachProduct({ products, setProducts }) {
   useEffect(() => {
@@ -95,7 +96,11 @@ export default function AttachProduct({ products, setProducts }) {
               <Typography variant="body2" fontWeight="bold">
                 ${product.price}
               </Typography>
-              <IconButton size="small" onClick={() => onRemove(product.id)}>
+              <IconButton
+                size="small"
+                onClick={() => onRemove(product.id)}
+                sx={{ color: theme.palette.primary.mainRed }}
+              >
                 <Delete fontSize="small" />
               </IconButton>
             </Stack>

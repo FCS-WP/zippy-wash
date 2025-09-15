@@ -46,6 +46,13 @@ class Zippy_Cart_Router
       'permission_callback' => array(ZIPPY_WASH_Permission::class, 'zippy_permission_callback'),
     ));
 
+    register_rest_route(ZIPPY_WASH_API_NAMESPACE, '/zippy-add-products-to-cart', array(
+      'methods' => 'POST',
+      'callback' => [Zippy_Cart_Controller::class, 'add_products_to_cart'],
+      'args' => Zippy_Api_Cart_Model::get_add_products_to_cart_args(),
+      'permission_callback' => array(ZIPPY_WASH_Permission::class, 'zippy_permission_callback'),
+    ));
+
     register_rest_route(ZIPPY_WASH_API_NAMESPACE, '/zippy-get-product-in-cart', array(
       'methods' => 'GET',
       'callback' => [Zippy_Cart_Controller::class, 'get_products_in_cart'],

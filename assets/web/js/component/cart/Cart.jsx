@@ -13,30 +13,57 @@ import AttachProduct from "../product/AttachProduct.jsx";
 import { webApi } from "../../api/index.js";
 import Loading from "../common/Loading.jsx";
 import CONSTANTS from "../../constant/constants.js";
+import theme from "../../../theme/customTheme.js";
 
 export default function Cart({ cart, setCart, onUpdateQty, onRemove }) {
-  const [productInCart, setProductInCart] = useState();
   const [productAttachs, setProductAttachs] = useState([]);
   const [availableProductInCart, setAvailableProductInCart] = useState();
+  const [total, setTotal] = useState(0);
 
-  const total = [...cart, ...productAttachs].reduce((sum, item) => {
-    const price = Number(item.price) || 0;
-    const qty = Number(item.qty) || 0;
-    return sum + price * qty;
-  }, 0);
+  const calculateTotal = (cart) => {
+    return [...cart, ...productAttachs].reduce((sum, item) => {
+      const price = Number(item.price) || 0;
+      const qty = Number(item.qty) || 1;
+      return sum + price * qty;
+    }, 0);
+  };
+
+  useEffect(() => {
+    const total = calculateTotal(cart);
+    setTotal(total);
+  }, [cart, productAttachs]);
 
   const placeOrder = async () => {
-    try {
-      // const productsToSend = [
-      //   ...cart,
-      //   ...productAttachs.map((item) => ({ ...item, qty: item.qty || 1 })),
-      // ];
+    await addToCartAttachProducts();
+    window.location.href = "/checkout";
+  };
 
-      // await webApi.addToCart({ products: productsToSend });
-      window.location.href = "/checkout";
-    } catch (error) {
-      console.error("Error adding to cart:", error);
+  const addToCartAttachProducts = async () => {
+    if (productAttachs.length === 0) return;
+
+    if (productAttachs.length === 1) {
+      const product = productAttachs[0];
+      await webApi.addToCart({
+        product_id: product.id,
+        qty: product.qty || 1,
+      });
+      document.body.dispatchEvent(
+        new Event("wc_fragment_refresh", { bubbles: true })
+      );
+      return;
     }
+
+    const productAttachsAddToCart = productAttachs.map((item) => ({
+      product_id: item.id,
+      qty: item.qty || 1,
+    }));
+
+    await webApi.addProductsToCart({
+      products: productAttachsAddToCart,
+    });
+    document.body.dispatchEvent(
+      new Event("wc_fragment_refresh", { bubbles: true })
+    );
   };
 
   useEffect(() => {
@@ -85,7 +112,7 @@ export default function Cart({ cart, setCart, onUpdateQty, onRemove }) {
         {/* Part 1 */}
         <Box sx={{ py: 1 }}>
           <Typography variant="h6" gutterBottom>
-            {cart.length} services selected
+            {cart?.length} services selected
           </Typography>
           <Box
             sx={{
@@ -150,6 +177,7 @@ export default function Cart({ cart, setCart, onUpdateQty, onRemove }) {
                 <IconButton
                   size="small"
                   onClick={() => onRemove(item.cart_item_key)}
+                  sx={{ color: theme.palette.primary.mainRed }}
                 >
                   <Delete fontSize="small" />
                 </IconButton>

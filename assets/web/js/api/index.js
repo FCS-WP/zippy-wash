@@ -26,6 +26,15 @@ export const webApi = {
     );
   },
 
+  async addProductsToCart(params) {
+    return await makeRequest(
+      "/zippy-add-products-to-cart",
+      params,
+      "POST",
+      true
+    );
+  },
+
   async removeCartItem(params) {
     return await makeRequest("/zippy-remove-cart-item", params, "POST", true);
   },
