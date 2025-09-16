@@ -100,7 +100,8 @@ export default function Shop() {
       sx={{
         bgcolor: "#f5f5f5",
         minHeight: "100vh",
-        p: 3,
+        py: 4,
+        px: { xs: 0, sm: 2, md: 6, lg: 8, xl: 20 },
       }}
     >
       {/* Category */}
@@ -118,7 +119,7 @@ export default function Shop() {
 
       {/* Product List + Cart */}
       <Grid2 container spacing={2} sx={{ mt: 2 }}>
-        <Grid2 size={{ xs: 12, md: 8 }}>
+        <Grid2 size={{ xs: 12, md: 12, lg: 12, xl: 8 }}>
           <ProductList
             onAddToCart={handleAddToCart}
             selectedCat={selectedCat}
@@ -126,7 +127,7 @@ export default function Shop() {
             selectedSubCategory={selectedSubCategory}
           />
         </Grid2>
-        <Grid2 size={{ xs: 12, md: 4 }}>
+        <Grid2 size={{ xs: 12, md: 12, lg: 12, xl: 4 }}>
           <Cart
             cart={cart}
             onUpdateQty={handleUpdateQty}

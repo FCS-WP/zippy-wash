@@ -171,9 +171,10 @@ export default function Cart({ cart, setCart, onUpdateQty, onRemove }) {
                 alignItems="center"
                 sx={{ width: 120, justifyContent: "flex-end" }}
               >
-                <Typography sx={{ textAlign: "right", minWidth: 50 }}>
-                  ${item.price * item.qty}
-                </Typography>
+                <Typography
+                  sx={{ textAlign: "right", minWidth: 50 }}
+                  dangerouslySetInnerHTML={{ __html: item.formatted_price }}
+                />
                 <IconButton
                   size="small"
                   onClick={() => onRemove(item.cart_item_key)}

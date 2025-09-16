@@ -93,9 +93,12 @@ export default function AttachProduct({ products, setProducts }) {
             </Stack>
 
             <Stack direction="row" spacing={0.5} alignItems="center">
-              <Typography variant="body2" fontWeight="bold">
-                ${product.price}
-              </Typography>
+              <Typography
+                variant="h6"
+                fontWeight="bold"
+                sx={{ fontSize: { xs: "0.8rem", sm: "0.9rem", md: "0.95rem" } }}
+                dangerouslySetInnerHTML={{ __html: product.formatted_price }}
+              />
               <IconButton
                 size="small"
                 onClick={() => onRemove(product.id)}
