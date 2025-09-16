@@ -15,17 +15,21 @@ import Loading from "../common/Loading.jsx";
 import CONSTANTS from "../../constant/constants.js";
 import theme from "../../../theme/customTheme.js";
 
-export default function Cart({ cart, setCart, onUpdateQty, onRemove }) {
+export default function Cart(props) {
+  const { cart, setCart, onUpdateQty, onRemove } = props;
   const [productAttachs, setProductAttachs] = useState([]);
   const [availableProductInCart, setAvailableProductInCart] = useState();
   const [total, setTotal] = useState(0);
 
   const calculateTotal = (cart) => {
-    return [...cart, ...productAttachs].reduce((sum, item) => {
-      const price = Number(item.price) || 0;
-      const qty = Number(item.qty) || 1;
-      return sum + price * qty;
-    }, 0);
+    return [...cart, ...productAttachs]
+      .reduce((sum, item) => {
+        const price = Number(item.price) || 0;
+        const qty = Number(item.qty) || 1;
+        const lineTotal = price * qty;
+        return sum + lineTotal;
+      }, 0)
+      .toFixed(2);
   };
 
   useEffect(() => {
@@ -34,23 +38,29 @@ export default function Cart({ cart, setCart, onUpdateQty, onRemove }) {
   }, [cart, productAttachs]);
 
   const placeOrder = async () => {
-    await addToCartAttachProducts();
+    const result = await addToCartAttachProducts();
+    console.log("placeOrder -> result", result);
+
+    if (!result) return;
     window.location.href = "/checkout";
   };
 
   const addToCartAttachProducts = async () => {
-    if (productAttachs.length === 0) return;
+    if (productAttachs.length === 0) return true;
 
     if (productAttachs.length === 1) {
       const product = productAttachs[0];
-      await webApi.addToCart({
+      const res = await webApi.addToCart({
         product_id: product.id,
         qty: product.qty || 1,
       });
       document.body.dispatchEvent(
         new Event("wc_fragment_refresh", { bubbles: true })
       );
-      return;
+
+      console.log("addToCartAttachProducts -> res", res);
+
+      return res.data.status == "success";
     }
 
     const productAttachsAddToCart = productAttachs.map((item) => ({
@@ -58,12 +68,14 @@ export default function Cart({ cart, setCart, onUpdateQty, onRemove }) {
       qty: item.qty || 1,
     }));
 
-    await webApi.addProductsToCart({
+    const res = await webApi.addProductsToCart({
       products: productAttachsAddToCart,
     });
     document.body.dispatchEvent(
       new Event("wc_fragment_refresh", { bubbles: true })
     );
+
+    return res.data.status == "success";
   };
 
   useEffect(() => {
@@ -107,7 +119,7 @@ export default function Cart({ cart, setCart, onUpdateQty, onRemove }) {
   }, [availableProductInCart]);
 
   return (
-    <Paper elevation={2} sx={{ p: 2 }}>
+    <Paper elevation={2} sx={{ p: 2, borderRadius: 2 }}>
       <Stack divider={<Divider />} spacing={0}>
         {/* Part 1 */}
         <Box sx={{ py: 1 }}>

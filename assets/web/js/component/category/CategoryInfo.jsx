@@ -2,13 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Stack, Typography, Paper, Avatar, Box } from "@mui/material";
 import CategoryItem from "./CategoryItem.jsx";
 import theme from "../../../theme/customTheme.js";
+import SubCategory from "./SubCategory.jsx";
 
-export default function CategoryInfo({
-  categories,
-  selectedCat,
-  onSubCategoryChange,
-  selectedSubCategory,
-}) {
+export default function CategoryInfo(props) {
+  const { categories, selectedCat, onSubCategoryChange, selectedSubCategory } =
+    props;
+
   if (!categories || categories.length === 0 || !selectedCat) {
     return null;
   }
@@ -21,6 +20,7 @@ export default function CategoryInfo({
 
   return (
     <Paper
+      id="category-info"
       elevation={2}
       sx={{
         p: 2,
@@ -72,7 +72,7 @@ export default function CategoryInfo({
         >
           {category.children.map((child) => (
             <Box key={child.id} sx={{ display: "inline-block" }}>
-              <CategoryItem
+              <SubCategory
                 id={child.id}
                 name={child.name}
                 selectedCat={selectedSubCategory}

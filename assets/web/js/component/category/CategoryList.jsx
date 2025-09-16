@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Stack, Typography, Paper } from "@mui/material";
+import { Stack, Typography, Paper, CircularProgress } from "@mui/material";
 import { webApi } from "../../api/index.js";
 import CategoryItem from "./CategoryItem.jsx";
 import theme from "../../../theme/customTheme.js";
+import Loading from "../common/Loading.jsx";
 
 export default function CategoryList({ onCategoryChange, setCategoryInfos }) {
   const [selectedCat, setSelectedCat] = useState(null);
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getCategories();
@@ -20,11 +22,11 @@ export default function CategoryList({ onCategoryChange, setCategoryInfos }) {
 
   const getCategories = async () => {
     try {
+      setLoading(true);
       const data = await webApi.getCategories();
       const categories = data?.data?.data || [];
       setCategories(categories);
       setCategoryInfos(categories);
-
       if (filterByQueryCategory(categories)) {
         return;
       }
@@ -33,6 +35,9 @@ export default function CategoryList({ onCategoryChange, setCategoryInfos }) {
       onCategoryChange(null);
     } catch (error) {
       console.error("Error fetching categories:", error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -58,6 +63,7 @@ export default function CategoryList({ onCategoryChange, setCategoryInfos }) {
 
   return (
     <Paper
+      id="category-list"
       elevation={2}
       sx={{
         p: 2,
@@ -78,32 +84,32 @@ export default function CategoryList({ onCategoryChange, setCategoryInfos }) {
           py: 1,
         }}
       >
-        {/* Nút All */}
-        <CategoryItem
-          id="all"
-          name="All"
-          selectedCat={selectedCat}
-          onSelect={handleSelectCategory}
-          bgcolor={theme.palette.primary.main}
-          colorText={theme.palette.text.primary}
-          colorTextHover={theme.palette.text.primary}
-          bgcolorHover={theme.palette.hover.main}
-        />
+        {loading ? (
+          <>
+            <Loading />
+          </>
+        ) : (
+          <>
+            {/* Nút All */}
+            <CategoryItem
+              id="all"
+              name="All"
+              selectedCat={selectedCat}
+              onSelect={handleSelectCategory}
+            />
 
-        {/* Render categories */}
-        {categories.map((cat) => (
-          <CategoryItem
-            key={cat.id}
-            id={cat.id}
-            name={cat.name}
-            selectedCat={selectedCat}
-            onSelect={handleSelectCategory}
-            bgcolor={theme.palette.primary.main}
-            colorText={theme.palette.text.primary}
-            colorTextHover={theme.palette.text.primary}
-            bgcolorHover={theme.palette.hover.main}
-          />
-        ))}
+            {/* Render categories */}
+            {categories.map((cat) => (
+              <CategoryItem
+                key={cat.id}
+                id={cat.id}
+                name={cat.name}
+                selectedCat={selectedCat}
+                onSelect={handleSelectCategory}
+              />
+            ))}
+          </>
+        )}
       </Stack>
     </Paper>
   );

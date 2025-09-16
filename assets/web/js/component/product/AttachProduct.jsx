@@ -20,10 +20,10 @@ export default function AttachProduct({ products, setProducts }) {
 
   const getProducts = async () => {
     try {
-      const data = await webApi.getProducts({
+      const { data: res } = await webApi.getProducts({
         category_slug: CONSTANTS.slugCategoryAddOn,
       });
-      setProducts(data.data.data);
+      setProducts(res.data.products || []);
     } catch (error) {
       console.error("Error fetching products:", error);
     }

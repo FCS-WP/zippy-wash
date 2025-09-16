@@ -24,20 +24,20 @@ class Zippy_Category_Controller
             $args = [
                 'taxonomy'   => 'product_cat',
                 'hide_empty' => false,
+                'orderby'    => 'term_order',
+                'order'      => 'ASC',
             ];
-
             $terms = get_terms($args);
 
             if (is_wp_error($terms)) {
                 return Zippy_Response_Handler::error($terms->get_error_message());
             }
 
-            // Build map id => term
             $categories = [];
             foreach ($terms as $term) {
                 $categories[$term->term_id] = [
                     'id'          => $term->term_id,
-                    'name'        => $term->name,
+                    'name'        => html_entity_decode($term->name),
                     'slug'        => $term->slug,
                     'description' => $term->description,
                     'count'       => $term->count,
@@ -46,10 +46,10 @@ class Zippy_Category_Controller
                     'img'         => get_term_meta($term->term_id, 'thumbnail_id', true) 
                                         ? wp_get_attachment_url(get_term_meta($term->term_id, 'thumbnail_id', true)) 
                                         : null,
+                    'order'       => $term->term_order,
                 ];
             }
 
-            // Xây dựng cây category
             $tree = [];
             foreach ($categories as $id => &$cat) {
                 if ($cat['parent'] && isset($categories[$cat['parent']])) {

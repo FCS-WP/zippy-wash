@@ -1,5 +1,6 @@
 import React from "react";
-import { Paper, Typography, Stack, Button, Box } from "@mui/material";
+import { Paper, Typography, Stack, Box } from "@mui/material";
+import theme from "../../../theme/customTheme";
 
 export default function ProductItem({ product, onAddToCart, cart }) {
   const inCart = cart?.some((item) => item.id === product.id);
@@ -15,38 +16,37 @@ export default function ProductItem({ product, onAddToCart, cart }) {
         border: inCart ? "2px solid #F04150" : "2px solid transparent",
         borderRadius: 2,
         ":hover": { bgcolor: "#f0f0f0" },
-        elevation: 3,
-        gap: 2,
+        gap: "50px",
+        minHeight: 100,
       }}
       onClick={() => onAddToCart(product)}
     >
       <Stack direction="row" spacing={2} alignItems="center">
-        {/* Ảnh */}
         <Box
           component="img"
           src={product.img}
           alt={product.name}
           sx={{ width: 80, height: 80, objectFit: "contain", borderRadius: 1 }}
         />
-        <Stack spacing={0.5}>
+        <Stack spacing={0.5} flex={1} minWidth={0}>
           <Typography
             variant="subtitle1"
             fontWeight="bold"
-            sx={{
-              fontSize: { xs: "0.9rem", sm: "1rem", md: "1.1rem" },
-            }}
+            sx={{ fontSize: { xs: "0.9rem", sm: "1rem", md: "1.1rem" } }}
+            noWrap
           >
             {product.name}
           </Typography>
 
           <Typography
             variant="caption"
-            color="text.secondary"
             sx={{
               display: "block",
               wordBreak: "break-word",
               overflowWrap: "break-word",
               fontSize: { xs: "0.7rem", sm: "0.8rem", md: "0.85rem" },
+              height: 40,
+              overflow: "hidden",
             }}
           >
             {product.desc}
@@ -54,7 +54,8 @@ export default function ProductItem({ product, onAddToCart, cart }) {
 
           <Typography
             variant="caption"
-            color="primary"
+            fontWeight="bold"
+            color={theme.palette.primary.mainRed}
             sx={{ fontSize: { xs: "0.7rem", sm: "0.8rem", md: "0.85rem" } }}
           >
             {product.categories.join(", ")}
