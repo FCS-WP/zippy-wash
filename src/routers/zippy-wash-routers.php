@@ -11,7 +11,9 @@ namespace ZIPPY_WASH\Src\Routers;
 defined('ABSPATH') or die();
 
 use ZIPPY_WASH\Src\Routers\General\Zippy_General_Router;
-
+use ZIPPY_WASH\Src\Routers\Category\Zippy_Category_Router;
+use ZIPPY_WASH\Src\Routers\Cart\Zippy_Cart_Router;
+use ZIPPY_WASH\Src\Routers\Product\Zippy_Product_Router;
 
 class ZIPPY_WASH_Routers
 {
@@ -32,5 +34,8 @@ class ZIPPY_WASH_Routers
   public function __construct()
   {
     Zippy_General_Router::get_instance();
+    Zippy_Category_Router::get_instance();
+    Zippy_Product_Router::get_instance();
+    Zippy_Cart_Router::get_instance();
   }
 }

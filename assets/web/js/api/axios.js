@@ -4,36 +4,39 @@ export const makeRequest = async (
   endpoint,
   params = {},
   method = "GET",
+  withCredentials = false,
   token = "FEhI30q7ySHtMfzvSDo6RkxZUDVaQ1BBU3lBcGhYS3BrQStIUT09"
 ) => {
   const baseURL = "/wp-json";
   const api = axios.create({
-    baseURL: baseURL,
+    baseURL,
+    withCredentials: withCredentials,
   });
+
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
   const config = {
-    url: "zippy-addons/v1" + endpoint,
-    params: params,
-    method: method,
-    headers: headers,
+    url: "/zippy-wash/v1" + endpoint,
+    method,
+    headers,
   };
+
+  if (method.toUpperCase() === "GET") {
+    config.params = params;
+  } else {
+    config.data = params;
+  }
+
   try {
-    let res = null;
-
-    res = await api.request(config);
-    const data = res.data;
-    return { data };
-  } catch {
-    (error) => {
-      if (!error?.response) {
-        console.error("❗Error", error.message);
-        return { ...error, catchedError: error };
-      }
-
-      console.error(error.response.statusText);
-      return error;
-    };
+    const res = await api.request(config);
+    return { data: res.data };
+  } catch (error) {
+    if (!error?.response) {
+      console.error("❗Error", error.message);
+      return { ...error, catchedError: error };
+    }
+    console.error(error.response.statusText);
+    return error;
   }
 };
 
@@ -114,7 +117,7 @@ export const makeLocalRequest = async (
   }
 };
 
-// Onemap Request 
+// Onemap Request
 export const makeOneMapRequest = async (
   endpoint,
   params = {},
@@ -145,5 +148,29 @@ export const makeOneMapRequest = async (
       console.error(error.response.statusText);
       return error;
     };
+  }
+};
+
+export const makeAdminAjaxRequest = async (params, method = "GET") => {
+  const config = {
+    method: method,
+    url: "/wp-admin/admin-ajax.php",
+    data: params,
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+  };
+
+  try {
+    const res = await axios(config);
+    return { data: res.data };
+  } catch (error) {
+    if (!error?.response) {
+      console.error("❗️Error", error.message);
+      return { catchedError: error };
+    }
+    console.error(error.response.statusText);
+    return { catchedError: error.response };
   }
 };

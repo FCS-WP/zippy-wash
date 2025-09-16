@@ -60,10 +60,13 @@ if (!defined('ZIPPY_WASH_API_NAMESPACE')) {
   define('ZIPPY_WASH_API_NAMESPACE', 'zippy-wash/v1');
 }
 
+foreach (glob(ZIPPY_WASH_DIR_PATH . "/includes/*.php") as $file_name) {
+    require_once ( $file_name );
+}
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
 
 /* ------------------------------------------
 // Includes
@@ -71,8 +74,9 @@ error_reporting(E_ALL);
 require ZIPPY_WASH_DIR_PATH . '/includes/autoload.php';
 
 use  ZIPPY_WASH\Src\Admin\Settings;
-
+use ZIPPY_WASH\Src\Routers\ZIPPY_WASH_Ajax;
 use ZIPPY_WASH\Src\Routers\ZIPPY_WASH_Routers;
+use ZIPPY_WASH\Src\Web\ZIPPY_WASH_Web;
 
 /**
  *
@@ -80,5 +84,8 @@ use ZIPPY_WASH\Src\Routers\ZIPPY_WASH_Routers;
  */
 
  Settings::get_instance();
-
  ZIPPY_WASH_Routers::get_instance();
+ ZIPPY_WASH_Web::get_instance();
+ ZIPPY_WASH_Ajax::get_instance();
+
+
