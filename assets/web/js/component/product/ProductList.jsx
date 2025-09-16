@@ -4,6 +4,7 @@ import ProductItem from "./ProductItem.jsx";
 import { webApi } from "../../api/index.js";
 import Loading from "../common/Loading.jsx";
 import CONSTANTS from "../../constant/constants.js";
+import theme from "../../../theme/customTheme.js";
 
 export default function ProductList({
   onAddToCart,
@@ -86,9 +87,19 @@ export default function ProductList({
               count={totalPages}
               page={page}
               onChange={handlePageChange}
-              color="primary"
-              shape="rounded"
               size="medium"
+              sx={{
+                "& .MuiPaginationItem-root": {
+                  color: "#000",
+                },
+                "& .Mui-selected": {
+                  backgroundColor: `${theme.palette.primary.mainRed} !important`,
+                  color: "#fff !important",
+                  "&:hover": {
+                    backgroundColor: `${theme.palette.primary.mainRed} !important`,
+                  },
+                },
+              }}
             />
           </Stack>
         </>
