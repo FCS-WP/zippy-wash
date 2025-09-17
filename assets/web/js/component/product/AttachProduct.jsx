@@ -22,10 +22,6 @@ export default function AttachProduct(props) {
     }
   };
 
-  const onRemove = (id) => {
-    setProducts((prev) => prev.filter((p) => p.id !== id));
-  };
-
   return (
     <Box
       sx={{
@@ -108,10 +104,6 @@ export default function AttachProduct(props) {
 
               <IconButton
                 size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onRemove(product.id);
-                }}
                 sx={{ color: theme.palette.primary.mainRed }}
               >
                 <ArrowForward fontSize="small" />
