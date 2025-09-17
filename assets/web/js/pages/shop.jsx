@@ -1,16 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { Grid2, Paper, Typography, Box } from "@mui/material";
+import { Grid2, Paper, Typography, Box, Stack } from "@mui/material";
 import CategoryList from "../component/category/CategoryList.jsx";
 import ProductList from "../component/product/ProductList.jsx";
 import Cart from "../component/cart/Cart.jsx";
 import CategoryInfo from "../component/category/CategoryInfo.jsx";
 import { webApi } from "../api/index.js";
+import ListSubCategory from "../component/category/ListSubCategory.jsx";
+import AttachProduct from "../component/product/AttachProduct.jsx";
 
 export default function Shop() {
   const [cart, setCart] = useState([]);
   const [selectedCat, setSelectedCat] = useState(null);
   const [categories, setCategories] = useState(null);
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
+  const [category, setCategory] = useState([]);
+  const [productAttachs, setProductAttachs] = useState([]);
+
+  useEffect(() => {
+    if (!selectedCat || !categories) {
+      setCategory(null);
+      return;
+    }
+
+    const category = categories.find((cat) => cat.id === selectedCat);
+    setCategory(category);
+  }, [selectedCat]);
 
   const handleAddToCart = async (product, qty = 1) => {
     try {
@@ -98,7 +112,7 @@ export default function Shop() {
     <Box
       className="shop-page"
       sx={{
-        bgcolor: "#f5f5f5",
+        bgcolor: "#ffffffff",
         minHeight: "100vh",
         py: 4,
         px: { xs: 0, sm: 2, md: 6, lg: 8, xl: 20 },
@@ -110,10 +124,12 @@ export default function Shop() {
         setCategoryInfos={setCategories}
       />
 
-      <CategoryInfo
-        categories={categories}
-        selectedCat={selectedCat}
-        onSubCategoryChange={setSelectedSubCategory}
+      <CategoryInfo categories={categories} selectedCat={selectedCat} />
+
+      {/* Sub Category */}
+      <ListSubCategory
+        category={category}
+        setSelectedSubCategory={setSelectedSubCategory}
         selectedSubCategory={selectedSubCategory}
       />
 
@@ -125,6 +141,13 @@ export default function Shop() {
             selectedCat={selectedCat}
             cart={cart}
             selectedSubCategory={selectedSubCategory}
+          />
+
+          <AttachProduct
+            products={productAttachs}
+            setProducts={setProductAttachs}
+            onAddToCart={handleAddToCart}
+            cart={cart}
           />
         </Grid2>
         <Grid2 size={{ xs: 12, md: 12, lg: 12, xl: 4 }}>

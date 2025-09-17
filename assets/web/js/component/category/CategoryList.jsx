@@ -62,55 +62,43 @@ export default function CategoryList({ onCategoryChange, setCategoryInfos }) {
   };
 
   return (
-    <Paper
+    <Stack
       id="category-list"
-      elevation={2}
+      direction="row"
+      spacing={2}
       sx={{
-        p: 2,
-        borderRadius: 2,
-        mb: 3,
-        bgcolor: "#007f5b",
+        overflowX: "auto",
+        whiteSpace: "nowrap",
+        py: 1,
       }}
     >
-      <Typography variant="h6" gutterBottom sx={{ color: "#fff" }}>
-        Categories
-      </Typography>
-      <Stack
-        direction="row"
-        spacing={2}
-        sx={{
-          overflowX: "auto",
-          whiteSpace: "nowrap",
-          py: 1,
-        }}
-      >
-        {loading ? (
-          <>
-            <Loading />
-          </>
-        ) : (
-          <>
-            {/* Nút All */}
+      {loading ? (
+        <>
+          <Loading />
+        </>
+      ) : (
+        <>
+          {/* Nút All */}
+          <CategoryItem
+            id="all"
+            name="All"
+            selectedCat={selectedCat}
+            onSelect={handleSelectCategory}
+          />
+
+          {/* Render categories */}
+          {categories.map((cat) => (
             <CategoryItem
-              id="all"
-              name="All"
+              key={cat.id}
+              id={cat.id}
+              name={cat.name}
+              img={cat.img}
               selectedCat={selectedCat}
               onSelect={handleSelectCategory}
             />
-
-            {/* Render categories */}
-            {categories.map((cat) => (
-              <CategoryItem
-                key={cat.id}
-                id={cat.id}
-                name={cat.name}
-                selectedCat={selectedCat}
-                onSelect={handleSelectCategory}
-              />
-            ))}
-          </>
-        )}
-      </Stack>
-    </Paper>
+          ))}
+        </>
+      )}
+    </Stack>
   );
 }

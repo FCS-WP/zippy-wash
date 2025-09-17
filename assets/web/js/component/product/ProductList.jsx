@@ -57,15 +57,7 @@ export default function ProductList({
   };
 
   return (
-    <Stack
-      spacing={2}
-      sx={{
-        bgcolor: "#d9eae4ff",
-        padding: 2,
-        borderRadius: 2,
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-      }}
-    >
+    <>
       {loading ? (
         <Loading fullHeight />
       ) : products.length === 0 ? (
@@ -104,6 +96,6 @@ export default function ProductList({
           </Stack>
         </>
       )}
-    </Stack>
+    </>
   );
 }

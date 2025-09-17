@@ -22,7 +22,7 @@ export default function Cart(props) {
   const [total, setTotal] = useState(0);
 
   const calculateTotal = (cart) => {
-    return [...cart, ...productAttachs]
+    return cart
       .reduce((sum, item) => {
         const price = Number(item.price) || 0;
         const qty = Number(item.qty) || 1;
@@ -38,44 +38,7 @@ export default function Cart(props) {
   }, [cart, productAttachs]);
 
   const placeOrder = async () => {
-    const result = await addToCartAttachProducts();
-    console.log("placeOrder -> result", result);
-
-    if (!result) return;
     window.location.href = "/checkout";
-  };
-
-  const addToCartAttachProducts = async () => {
-    if (productAttachs.length === 0) return true;
-
-    if (productAttachs.length === 1) {
-      const product = productAttachs[0];
-      const res = await webApi.addToCart({
-        product_id: product.id,
-        qty: product.qty || 1,
-      });
-      document.body.dispatchEvent(
-        new Event("wc_fragment_refresh", { bubbles: true })
-      );
-
-      console.log("addToCartAttachProducts -> res", res);
-
-      return res.data.status == "success";
-    }
-
-    const productAttachsAddToCart = productAttachs.map((item) => ({
-      product_id: item.id,
-      qty: item.qty || 1,
-    }));
-
-    const res = await webApi.addProductsToCart({
-      products: productAttachsAddToCart,
-    });
-    document.body.dispatchEvent(
-      new Event("wc_fragment_refresh", { bubbles: true })
-    );
-
-    return res.data.status == "success";
   };
 
   useEffect(() => {
@@ -97,29 +60,30 @@ export default function Cart(props) {
 
     const merged = [...cart];
 
-    availableProductInCart
-      .filter((item) => !item.categories.includes(CONSTANTS.slugCategoryAddOn))
-      .forEach((item) => {
-        const index = merged.findIndex((c) => c.id === item.id);
-        if (index > -1) {
-          merged[index] = {
-            ...merged[index],
-            qty: merged[index].qty + item.quantity,
-            price: item.price,
-          };
-        } else {
-          merged.push({
-            ...item,
-            qty: item.quantity,
-          });
-        }
-      });
+    availableProductInCart.forEach((item) => {
+      const index = merged.findIndex((c) => c.id === item.id);
+      if (index > -1) {
+        merged[index] = {
+          ...merged[index],
+          qty: merged[index].qty + item.quantity,
+          price: item.price,
+        };
+      } else {
+        merged.push({
+          ...item,
+          qty: item.quantity,
+        });
+      }
+    });
 
     setCart(merged);
   }, [availableProductInCart]);
 
   return (
-    <Paper elevation={2} sx={{ p: 2, borderRadius: 2 }}>
+    <Paper
+      elevation={0}
+      sx={{ p: 2, borderRadius: 2, border: "1px solid #dbdbdbff" }}
+    >
       <Stack divider={<Divider />} spacing={0}>
         {/* Part 1 */}
         <Box sx={{ py: 1 }}>
@@ -165,6 +129,14 @@ export default function Cart(props) {
                 <IconButton
                   size="small"
                   onClick={() => onUpdateQty(item, item.qty - 1)}
+                  sx={{
+                    "&:focus": {
+                      backgroundColor: theme.palette.primary.mainRed,
+                    },
+                    "&:hover": {
+                      backgroundColor: theme.palette.primary.mainRed,
+                    },
+                  }}
                 >
                   <Remove fontSize="small" />
                 </IconButton>
@@ -172,6 +144,14 @@ export default function Cart(props) {
                 <IconButton
                   size="small"
                   onClick={() => onUpdateQty(item, item.qty + 1)}
+                  sx={{
+                    "&:focus": {
+                      backgroundColor: theme.palette.primary.mainRed,
+                    },
+                    "&:hover": {
+                      backgroundColor: theme.palette.primary.mainRed,
+                    },
+                  }}
                 >
                   <Add fontSize="small" />
                 </IconButton>
@@ -198,11 +178,6 @@ export default function Cart(props) {
             </Stack>
           ))}
         </Stack>
-
-        <AttachProduct
-          products={productAttachs}
-          setProducts={setProductAttachs}
-        />
 
         {/* Part 3: Total + Button */}
         <Box sx={{ py: 1 }}>

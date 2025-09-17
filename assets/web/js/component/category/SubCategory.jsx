@@ -17,22 +17,21 @@ export default function SubCategory({ id, name, selectedCat, onSelect }) {
         py: 0.5,
         fontSize: "12px",
         textTransform: "none",
-        bgcolor: isSelected
-          ? theme.palette.primary.mainRed
-          : theme.palette.primary.mainGreen,
-        color: "#fff",
+        bgcolor: "#fff",
+        color: theme.palette.text.primary,
         border: isSelected
-          ? `1px solid ${theme.palette.primary.mainRed}`
-          : `1px solid ${theme.palette.primary.mainGreen}`,
-        boxShadow: "0px 3px 8px rgba(0,0,0,0.25)",
+          ? `2px solid ${theme.palette.primary.mainRed}`
+          : "1px solid #e0e0e0ff",
         transition: "all 0.2s ease",
         ":hover": {
-          bgcolor: "#006644",
-          border: `1px solid ${theme.palette.primary.mainGreen}`,
+          bgcolor: "#fcf7f7ff",
+          border: `2px solid ${theme.palette.primary.mainRed}`,
+          color: theme.palette.text.primary,
         },
         ":focus": {
-          bgcolor: theme.palette.primary.mainRed,
-          border: `1px solid ${theme.palette.primary.mainRed}`,
+          bgcolor: "#fff",
+          border: `2px solid ${theme.palette.primary.mainRed}`,
+          color: theme.palette.text.primary,
         },
       }}
     >

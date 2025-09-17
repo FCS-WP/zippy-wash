@@ -1,14 +1,19 @@
 @import "./variables";
-
+@import "./breakpoints";
 #category-info {
   .subcat-btn {
     font-size: 14px;
+    text-shadow: none;
   }
 }
 
 #category-list {
   .cat-btn {
     font-size: 16px;
-    padding: 6px 18px;
+    text-shadow: none;
+    padding: 6px 24px;
+    @include desktop {
+      padding: 6px 18px;
+    }
   }
 }

@@ -7,13 +7,15 @@ import {
   Button,
   Box,
   Divider,
+  Tooltip,
 } from "@mui/material";
-import { Delete } from "@mui/icons-material";
+import { ArrowForward } from "@mui/icons-material";
 import { webApi } from "../../api";
 import CONSTANTS from "../../constant/constants";
 import theme from "../../../theme/customTheme";
 
-export default function AttachProduct({ products, setProducts }) {
+export default function AttachProduct(props) {
+  const { products, setProducts, onAddToCart, cart } = props;
   useEffect(() => {
     getProducts();
   }, []);
@@ -34,85 +36,77 @@ export default function AttachProduct({ products, setProducts }) {
   };
 
   return (
-    <Stack
-      spacing={2}
+    <Box
       sx={{
-        bgcolor: "#ffffffff",
+        display: "flex",
+        flexDirection: "row",
+        flexWrap: "nowrap",
+        gap: 2,
+        bgcolor: "#fff",
         py: 2,
+        overflowX: "auto",
+        "&::-webkit-scrollbar": { height: 6 },
+        "&::-webkit-scrollbar-thumb": { background: "#ccc", borderRadius: 3 },
       }}
     >
-      {products.map((product) => (
-        <Paper
-          key={product.id}
-          sx={{
-            p: 1.5,
-            bgcolor: "#ffffffff",
-            cursor: "pointer",
-            ":hover": { bgcolor: "#f0f0f0" },
-            minHeight: 120,
-            boxShadow: "0 0 10px rgba(50, 50, 50, 0.2)",
-          }}
-        >
-          <Box
-            component="img"
-            src={product.img}
-            alt={product.name}
-            sx={{
-              width: 35,
-              height: 35,
-              objectFit: "cover",
-              borderRadius: "50%",
-              mb: 1,
-            }}
-          />
+      {products.map((product) => {
+        const inCart = cart?.some((item) => item.id === product.id);
 
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
+        return (
+          <Paper
+            elevation={0}
+            key={product.id}
+            sx={{
+              p: 1.5,
+              bgcolor: "#fff",
+              cursor: "pointer",
+              ":hover": { bgcolor: "#f0f0f0" },
+              width: 300,
+              border: inCart
+                ? `1px solid ${theme.palette.primary.mainRed}`
+                : "1px solid #e6e6e6ff",
+            }}
+            onClick={() => onAddToCart(product)}
           >
             <Stack
-              spacing={0.3}
-              sx={{
-                flex: 1,
-                minWidth: 0,
-              }}
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              gap={6}
             >
-              <Typography variant="subtitle2" fontWeight="bold" noWrap>
-                {product.name}
-              </Typography>
+              <Stack spacing={0.3} sx={{ flex: 1, minWidth: 0 }}>
+                <Typography variant="subtitle2" fontWeight="bold" noWrap>
+                  {product.name}
+                </Typography>
 
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{
-                  display: "block",
-                  wordBreak: "break-word",
-                  overflowWrap: "break-word",
-                }}
-              >
-                {product.desc}
-              </Typography>
-            </Stack>
+                <Stack direction="row" spacing={0.5} alignItems="center">
+                  <Typography
+                    variant="h6"
+                    fontWeight="regular"
+                    sx={{
+                      fontSize: { xs: "0.8rem", sm: "0.9rem", md: "0.95rem" },
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html: product.formatted_price,
+                    }}
+                  />
+                </Stack>
+              </Stack>
 
-            <Stack direction="row" spacing={0.5} alignItems="center">
-              <Typography
-                variant="h6"
-                fontWeight="bold"
-                sx={{ fontSize: { xs: "0.8rem", sm: "0.9rem", md: "0.95rem" } }}
-                dangerouslySetInnerHTML={{ __html: product.formatted_price }}
-              />
               <IconButton
                 size="small"
-                onClick={() => onRemove(product.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemove(product.id);
+                }}
                 sx={{ color: theme.palette.primary.mainRed }}
               >
-                <Delete fontSize="small" />
+                <ArrowForward fontSize="small" />
               </IconButton>
             </Stack>
-          </Stack>
-        </Paper>
-      ))}
-    </Stack>
+          </Paper>
+        );
+      })}
+    </Box>
   );
 }
