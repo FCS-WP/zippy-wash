@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Stack, Typography, Pagination } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import ProductItem from "./ProductItem.jsx";
 import { webApi } from "../../api/index.js";
 import Loading from "../common/Loading.jsx";
 import CONSTANTS from "../../constant/constants.js";
 import theme from "../../../theme/customTheme.js";
+import CustomPagination from "../common/CustomPagination.jsx";
 
-export default function ProductList({
-  onAddToCart,
-  selectedCat,
-  cart,
-  selectedSubCategory,
-}) {
+export default function ProductList(props) {
+  const { onAddToCart, selectedCat, cart, selectedSubCategory } = props;
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -74,26 +71,11 @@ export default function ProductList({
               cart={cart}
             />
           ))}
-          <Stack direction="row" justifyContent="center" mt={2}>
-            <Pagination
-              count={totalPages}
-              page={page}
-              onChange={handlePageChange}
-              size="medium"
-              sx={{
-                "& .MuiPaginationItem-root": {
-                  color: "#000",
-                },
-                "& .Mui-selected": {
-                  backgroundColor: `${theme.palette.primary.mainRed} !important`,
-                  color: "#fff !important",
-                  "&:hover": {
-                    backgroundColor: `${theme.palette.primary.mainRed} !important`,
-                  },
-                },
-              }}
-            />
-          </Stack>
+          <CustomPagination
+            page={page}
+            totalPages={totalPages}
+            onChange={handlePageChange}
+          />
         </>
       )}
     </>

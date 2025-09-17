@@ -21,6 +21,27 @@ export default function Cart(props) {
   const [availableProductInCart, setAvailableProductInCart] = useState();
   const [total, setTotal] = useState(0);
 
+  // Fetch products in cart
+  useEffect(() => {
+    getProductsInCart();
+  }, []);
+
+  // Set products in cart to cart state
+  useEffect(() => {
+    if (!availableProductInCart) return;
+    setCart(availableProductInCart);
+  }, [availableProductInCart]);
+
+  // Calculate total when add to cart, remove, update qty
+  useEffect(() => {
+    const total = calculateTotal(cart);
+    setTotal(total);
+  }, [cart, productAttachs]);
+
+  const placeOrder = async () => {
+    window.location.href = "/checkout";
+  };
+
   const calculateTotal = (cart) => {
     return cart
       .reduce((sum, item) => {
@@ -32,19 +53,6 @@ export default function Cart(props) {
       .toFixed(2);
   };
 
-  useEffect(() => {
-    const total = calculateTotal(cart);
-    setTotal(total);
-  }, [cart, productAttachs]);
-
-  const placeOrder = async () => {
-    window.location.href = "/checkout";
-  };
-
-  useEffect(() => {
-    getProductsInCart();
-  }, []);
-
   const getProductsInCart = async () => {
     try {
       const data = await webApi.getProductsInCart();
@@ -54,30 +62,6 @@ export default function Cart(props) {
       setAvailableProductInCart();
     }
   };
-
-  useEffect(() => {
-    if (!availableProductInCart) return;
-
-    const merged = [...cart];
-
-    availableProductInCart.forEach((item) => {
-      const index = merged.findIndex((c) => c.id === item.id);
-      if (index > -1) {
-        merged[index] = {
-          ...merged[index],
-          qty: merged[index].qty + item.quantity,
-          price: item.price,
-        };
-      } else {
-        merged.push({
-          ...item,
-          qty: item.quantity,
-        });
-      }
-    });
-
-    setCart(merged);
-  }, [availableProductInCart]);
 
   return (
     <Paper

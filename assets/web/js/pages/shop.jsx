@@ -16,6 +16,7 @@ export default function Shop() {
   const [category, setCategory] = useState([]);
   const [productAttachs, setProductAttachs] = useState([]);
 
+  //Set current category
   useEffect(() => {
     if (!selectedCat || !categories) {
       setCategory(null);
@@ -26,15 +27,22 @@ export default function Shop() {
     setCategory(category);
   }, [selectedCat]);
 
+  useEffect(() => {
+    setSelectedSubCategory(null);
+  }, [selectedCat]);
+
+  // Add to cart
   const handleAddToCart = async (product, qty = 1) => {
     try {
       setCart((prev) => {
         const exist = prev.find((item) => item.id === product.id);
 
         if (exist) {
+          //Re click to remove
           handleRemove(exist.cart_item_key);
           return prev.filter((item) => item.id !== product.id);
         } else {
+          // Add new product to cart
           (async () => {
             const res = await webApi.addToCart({
               product_id: product.id,
@@ -103,10 +111,6 @@ export default function Shop() {
       console.error("Error removing cart item:", error);
     }
   };
-
-  useEffect(() => {
-    setSelectedSubCategory(null);
-  }, [selectedCat]);
 
   return (
     <Box
