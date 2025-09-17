@@ -1,41 +1,55 @@
 import React from "react";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import theme from "../../../theme/customTheme";
 
-export default function CategoryItem({
-  id,
-  name,
-  selectedCat,
-  onSelect,
-  bgcolor = theme.palette.primary.main,
-  colorText = theme.palette.text.primary,
-  colorTextHover = theme.palette.text.primary,
-  bgcolorHover = theme.palette.hover.main,
-}) {
+export default function CategoryItem(props) {
+  const { id, name, img, selectedCat, onSelect } = props;
   const isSelected = selectedCat === id;
-  const bg = isSelected ? theme.palette.primary.mainRed : bgcolor;
-  const colorTextActive = "#ffffff";
 
   return (
     <Button
+      className="cat-btn"
       variant="outlined"
       onClick={() => onSelect(id)}
       sx={{
-        borderRadius: "30px",
+        display: "flex",
+        alignItems: "center",
+        gap: 1,
+        textAlign: "center",
+        borderRadius: "5px",
         minWidth: "auto",
-        px: 2,
-        bgcolor: bg,
-        color: colorText,
-        ":focus": {
-          bgcolor: bg,
-          color: colorTextActive,
-        },
+        textTransform: "none",
+        bgcolor: isSelected ? theme.palette.primary.mainRed : "#fff",
+        color: isSelected ? "#fff" : theme.palette.text.primary,
+        border: isSelected
+          ? `1px solid ${theme.palette.primary.mainRed}`
+          : "1px solid #ebe8e8ff",
+        transition: "all 0.2s ease",
         ":hover": {
-          bgcolor: bgcolorHover,
-          color: colorTextHover,
+          bgcolor: "#ede9e9ff",
+          color: theme.palette.text.primary,
+          border: `1px solid #ede9e9ff`,
+        },
+        ":focus": {
+          bgcolor: isSelected ? theme.palette.primary.mainRed : "#d3d3d3ff",
+          color: isSelected ? "#fff" : theme.palette.text.primary,
+          border: `1px solid ${theme.palette.primary.mainRed}`,
         },
       }}
     >
+      {img && (
+        <Box
+          component="img"
+          src={img}
+          alt={name}
+          sx={{
+            width: 35,
+            height: 23,
+            objectFit: "cover",
+            borderRadius: 1,
+          }}
+        />
+      )}
       {name}
     </Button>
   );

@@ -15,60 +15,43 @@ import Loading from "../common/Loading.jsx";
 import CONSTANTS from "../../constant/constants.js";
 import theme from "../../../theme/customTheme.js";
 
-export default function Cart({ cart, setCart, onUpdateQty, onRemove }) {
+export default function Cart(props) {
+  const { cart, setCart, onUpdateQty, onRemove } = props;
   const [productAttachs, setProductAttachs] = useState([]);
   const [availableProductInCart, setAvailableProductInCart] = useState();
   const [total, setTotal] = useState(0);
 
-  const calculateTotal = (cart) => {
-    return [...cart, ...productAttachs].reduce((sum, item) => {
-      const price = Number(item.price) || 0;
-      const qty = Number(item.qty) || 1;
-      return sum + price * qty;
-    }, 0);
-  };
+  // Fetch products in cart
+  useEffect(() => {
+    getProductsInCart();
+  }, []);
 
+  // Set products in cart to cart state
+  useEffect(() => {
+    if (!availableProductInCart) return;
+    setCart(availableProductInCart);
+  }, [availableProductInCart]);
+
+  // Calculate total when add to cart, remove, update qty
   useEffect(() => {
     const total = calculateTotal(cart);
     setTotal(total);
   }, [cart, productAttachs]);
 
   const placeOrder = async () => {
-    await addToCartAttachProducts();
     window.location.href = "/checkout";
   };
 
-  const addToCartAttachProducts = async () => {
-    if (productAttachs.length === 0) return;
-
-    if (productAttachs.length === 1) {
-      const product = productAttachs[0];
-      await webApi.addToCart({
-        product_id: product.id,
-        qty: product.qty || 1,
-      });
-      document.body.dispatchEvent(
-        new Event("wc_fragment_refresh", { bubbles: true })
-      );
-      return;
-    }
-
-    const productAttachsAddToCart = productAttachs.map((item) => ({
-      product_id: item.id,
-      qty: item.qty || 1,
-    }));
-
-    await webApi.addProductsToCart({
-      products: productAttachsAddToCart,
-    });
-    document.body.dispatchEvent(
-      new Event("wc_fragment_refresh", { bubbles: true })
-    );
+  const calculateTotal = (cart) => {
+    return cart
+      .reduce((sum, item) => {
+        const price = Number(item.price) || 0;
+        const qty = Number(item.qty) || 1;
+        const lineTotal = price * qty;
+        return sum + lineTotal;
+      }, 0)
+      .toFixed(2);
   };
-
-  useEffect(() => {
-    getProductsInCart();
-  }, []);
 
   const getProductsInCart = async () => {
     try {
@@ -80,34 +63,11 @@ export default function Cart({ cart, setCart, onUpdateQty, onRemove }) {
     }
   };
 
-  useEffect(() => {
-    if (!availableProductInCart) return;
-
-    const merged = [...cart];
-
-    availableProductInCart
-      .filter((item) => !item.categories.includes(CONSTANTS.slugCategoryAddOn))
-      .forEach((item) => {
-        const index = merged.findIndex((c) => c.id === item.id);
-        if (index > -1) {
-          merged[index] = {
-            ...merged[index],
-            qty: merged[index].qty + item.quantity,
-            price: item.price,
-          };
-        } else {
-          merged.push({
-            ...item,
-            qty: item.quantity,
-          });
-        }
-      });
-
-    setCart(merged);
-  }, [availableProductInCart]);
-
   return (
-    <Paper elevation={2} sx={{ p: 2 }}>
+    <Paper
+      elevation={0}
+      sx={{ p: 2, borderRadius: 2, border: "1px solid #dbdbdbff" }}
+    >
       <Stack divider={<Divider />} spacing={0}>
         {/* Part 1 */}
         <Box sx={{ py: 1 }}>
@@ -153,6 +113,14 @@ export default function Cart({ cart, setCart, onUpdateQty, onRemove }) {
                 <IconButton
                   size="small"
                   onClick={() => onUpdateQty(item, item.qty - 1)}
+                  sx={{
+                    "&:focus": {
+                      backgroundColor: theme.palette.primary.mainRed,
+                    },
+                    "&:hover": {
+                      backgroundColor: theme.palette.primary.mainRed,
+                    },
+                  }}
                 >
                   <Remove fontSize="small" />
                 </IconButton>
@@ -160,6 +128,14 @@ export default function Cart({ cart, setCart, onUpdateQty, onRemove }) {
                 <IconButton
                   size="small"
                   onClick={() => onUpdateQty(item, item.qty + 1)}
+                  sx={{
+                    "&:focus": {
+                      backgroundColor: theme.palette.primary.mainRed,
+                    },
+                    "&:hover": {
+                      backgroundColor: theme.palette.primary.mainRed,
+                    },
+                  }}
                 >
                   <Add fontSize="small" />
                 </IconButton>
@@ -171,9 +147,10 @@ export default function Cart({ cart, setCart, onUpdateQty, onRemove }) {
                 alignItems="center"
                 sx={{ width: 120, justifyContent: "flex-end" }}
               >
-                <Typography sx={{ textAlign: "right", minWidth: 50 }}>
-                  ${item.price * item.qty}
-                </Typography>
+                <Typography
+                  sx={{ textAlign: "right", minWidth: 50 }}
+                  dangerouslySetInnerHTML={{ __html: item.formatted_price }}
+                />
                 <IconButton
                   size="small"
                   onClick={() => onRemove(item.cart_item_key)}
@@ -185,11 +162,6 @@ export default function Cart({ cart, setCart, onUpdateQty, onRemove }) {
             </Stack>
           ))}
         </Stack>
-
-        <AttachProduct
-          products={productAttachs}
-          setProducts={setProductAttachs}
-        />
 
         {/* Part 3: Total + Button */}
         <Box sx={{ py: 1 }}>

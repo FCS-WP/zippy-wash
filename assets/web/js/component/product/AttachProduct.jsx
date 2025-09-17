@@ -1,29 +1,22 @@
 import React, { useEffect, useState } from "react";
-import {
-  Paper,
-  Typography,
-  Stack,
-  IconButton,
-  Button,
-  Box,
-  Divider,
-} from "@mui/material";
-import { Delete } from "@mui/icons-material";
+import { Paper, Typography, Stack, IconButton, Box } from "@mui/material";
+import { ArrowForward } from "@mui/icons-material";
 import { webApi } from "../../api";
 import CONSTANTS from "../../constant/constants";
 import theme from "../../../theme/customTheme";
 
-export default function AttachProduct({ products, setProducts }) {
+export default function AttachProduct(props) {
+  const { products, setProducts, onAddToCart, cart } = props;
   useEffect(() => {
     getProducts();
   }, []);
 
   const getProducts = async () => {
     try {
-      const data = await webApi.getProducts({
+      const { data: res } = await webApi.getProducts({
         category_slug: CONSTANTS.slugCategoryAddOn,
       });
-      setProducts(data.data.data);
+      setProducts(res.data.products || []);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
@@ -34,79 +27,99 @@ export default function AttachProduct({ products, setProducts }) {
   };
 
   return (
-    <Stack
-      spacing={2}
+    <Box
       sx={{
-        bgcolor: "#ffffffff",
+        display: "flex",
+        flexDirection: "row",
+        flexWrap: "nowrap",
+        gap: 2,
+        bgcolor: "#fff",
+        py: 2,
+        overflowX: "auto",
+        "&::-webkit-scrollbar": { height: 6 },
+        "&::-webkit-scrollbar-thumb": { background: "#ccc", borderRadius: 3 },
       }}
     >
-      {products.map((product) => (
-        <Paper
-          key={product.id}
-          sx={{
-            p: 1.5,
-            bgcolor: "#ffffffff",
-            cursor: "pointer",
-            ":hover": { bgcolor: "#f0f0f0" },
-          }}
-        >
-          <Box
-            component="img"
-            src={product.img}
-            alt={product.name}
-            sx={{
-              width: 35,
-              height: 35,
-              objectFit: "cover",
-              borderRadius: "50%",
-              mb: 1,
-            }}
-          />
+      {products.map((product) => {
+        const inCart = cart?.some((item) => item.id === product.id);
 
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
+        return (
+          <Paper
+            elevation={0}
+            key={product.id}
+            sx={{
+              p: 1,
+              bgcolor: "#fff",
+              cursor: "pointer",
+              ":hover": { bgcolor: "#f0f0f0" },
+              width: 160,
+              border: inCart
+                ? `1px solid ${theme.palette.primary.mainRed}`
+                : "1px solid #e6e6e6ff",
+            }}
+            onClick={() => onAddToCart(product)}
           >
             <Stack
-              spacing={0.3}
-              sx={{
-                flex: 1,
-                minWidth: 0,
-              }}
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              gap={6}
             >
-              <Typography variant="subtitle2" fontWeight="bold" noWrap>
-                {product.name}
-              </Typography>
-
-              <Typography
-                variant="caption"
-                color="text.secondary"
+              <Stack
+                spacing={0.3}
                 sx={{
-                  display: "block",
-                  wordBreak: "break-word",
-                  overflowWrap: "break-word",
+                  flex: 1,
+                  minWidth: 0,
                 }}
               >
-                {product.desc}
-              </Typography>
-            </Stack>
+                <Typography
+                  variant="subtitle2"
+                  fontWeight="bold"
+                  sx={{
+                    fontSize: {
+                      xs: "0.5rem",
+                      sm: "0.6rem",
+                      md: "0.7rem",
+                      lg: "0.75rem",
+                    },
+                  }}
+                >
+                  {product.name}
+                </Typography>
 
-            <Stack direction="row" spacing={0.5} alignItems="center">
-              <Typography variant="body2" fontWeight="bold">
-                ${product.price}
-              </Typography>
+                <Stack direction="row" spacing={0.5} alignItems="center">
+                  <Typography
+                    variant="h6"
+                    fontWeight="regular"
+                    sx={{
+                      fontSize: {
+                        xs: "0.5rem",
+                        sm: "0.6rem",
+                        md: "0.7rem",
+                        lg: "0.8rem",
+                      },
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html: product.formatted_price,
+                    }}
+                  />
+                </Stack>
+              </Stack>
+
               <IconButton
                 size="small"
-                onClick={() => onRemove(product.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemove(product.id);
+                }}
                 sx={{ color: theme.palette.primary.mainRed }}
               >
-                <Delete fontSize="small" />
+                <ArrowForward fontSize="small" />
               </IconButton>
             </Stack>
-          </Stack>
-        </Paper>
-      ))}
-    </Stack>
+          </Paper>
+        );
+      })}
+    </Box>
   );
 }

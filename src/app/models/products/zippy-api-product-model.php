@@ -30,6 +30,20 @@ class Zippy_Api_Product_Model
           return is_string($param);
         }
       ),
+      'page' => array(
+        'required' => false,
+        'default' => 1,
+        'validate_callback' => function ($param) {
+          return is_numeric($param) && $param > 0;
+        }
+      ),
+      'per_page' => array(
+        'required' => false,
+        'default' => 10,
+        'validate_callback' => function ($param) {
+          return is_numeric($param) && $param > 0;
+        }
+      ),
     );
   }
 }
