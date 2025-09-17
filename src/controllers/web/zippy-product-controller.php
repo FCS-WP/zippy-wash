@@ -56,6 +56,9 @@ class Zippy_Product_Controller
                 'categories'     => wp_get_post_terms($product->get_id(), 'product_cat', ['fields' => 'slugs']),
                 'desc'           => $product->get_description(),
                 'stock_status'   => $product->get_stock_status(),
+                'category_names' => array_map(function($name) {
+                                        return html_entity_decode($name);
+                                    }, wp_get_post_terms($product->get_id(), 'product_cat', ['fields' => 'names'])),
             ];
         }, $products_page);
 

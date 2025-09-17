@@ -38,6 +38,7 @@ export default function AttachProduct({ products, setProducts }) {
       spacing={2}
       sx={{
         bgcolor: "#ffffffff",
+        py: 2,
       }}
     >
       {products.map((product) => (
@@ -48,6 +49,8 @@ export default function AttachProduct({ products, setProducts }) {
             bgcolor: "#ffffffff",
             cursor: "pointer",
             ":hover": { bgcolor: "#f0f0f0" },
+            minHeight: 120,
+            boxShadow: "0 0 10px rgba(50, 50, 50, 0.2)",
           }}
         >
           <Box

@@ -17,11 +17,11 @@ export default function ProductItem({ product, onAddToCart, cart }) {
         borderRadius: 2,
         ":hover": { bgcolor: "#f0f0f0" },
         gap: "50px",
-        minHeight: 100,
+        minHeight: 150,
       }}
       onClick={() => onAddToCart(product)}
     >
-      <Stack direction="row" spacing={2} alignItems="center">
+      <Stack direction="row" spacing={2} alignItems="center" gap={2}>
         <Box
           component="img"
           src={product.img}
@@ -58,7 +58,7 @@ export default function ProductItem({ product, onAddToCart, cart }) {
             color={theme.palette.primary.mainRed}
             sx={{ fontSize: { xs: "0.7rem", sm: "0.8rem", md: "0.85rem" } }}
           >
-            {product.categories.join(", ")}
+            {product.category_names.join(", ")}
           </Typography>
         </Stack>
       </Stack>

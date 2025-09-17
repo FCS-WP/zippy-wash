@@ -21,6 +21,7 @@ class Zippy_Category_Controller
     public static function get_categories(WP_REST_Request $request)
     {
         try {
+            $excludeCategory = ['add-on'];
             $args = [
                 'taxonomy'   => 'product_cat',
                 'hide_empty' => false,
@@ -28,13 +29,16 @@ class Zippy_Category_Controller
                 'order'      => 'ASC',
             ];
             $terms = get_terms($args);
-
             if (is_wp_error($terms)) {
                 return Zippy_Response_Handler::error($terms->get_error_message());
             }
 
             $categories = [];
             foreach ($terms as $term) {
+                if (in_array($term->slug, $excludeCategory)) {
+                    continue;
+                }
+
                 $categories[$term->term_id] = [
                     'id'          => $term->term_id,
                     'name'        => html_entity_decode($term->name),
