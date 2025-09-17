@@ -48,11 +48,11 @@ export default function AttachProduct(props) {
             elevation={0}
             key={product.id}
             sx={{
-              p: 1.5,
+              p: 1,
               bgcolor: "#fff",
               cursor: "pointer",
               ":hover": { bgcolor: "#f0f0f0" },
-              width: 300,
+              width: 160,
               border: inCart
                 ? `1px solid ${theme.palette.primary.mainRed}`
                 : "1px solid #e6e6e6ff",
@@ -65,8 +65,25 @@ export default function AttachProduct(props) {
               alignItems="center"
               gap={6}
             >
-              <Stack spacing={0.3} sx={{ flex: 1, minWidth: 0 }}>
-                <Typography variant="subtitle2" fontWeight="bold" noWrap>
+              <Stack
+                spacing={0.3}
+                sx={{
+                  flex: 1,
+                  minWidth: 0,
+                }}
+              >
+                <Typography
+                  variant="subtitle2"
+                  fontWeight="bold"
+                  sx={{
+                    fontSize: {
+                      xs: "0.5rem",
+                      sm: "0.6rem",
+                      md: "0.7rem",
+                      lg: "0.75rem",
+                    },
+                  }}
+                >
                   {product.name}
                 </Typography>
 
@@ -75,7 +92,12 @@ export default function AttachProduct(props) {
                     variant="h6"
                     fontWeight="regular"
                     sx={{
-                      fontSize: { xs: "0.8rem", sm: "0.9rem", md: "0.95rem" },
+                      fontSize: {
+                        xs: "0.5rem",
+                        sm: "0.6rem",
+                        md: "0.7rem",
+                        lg: "0.8rem",
+                      },
                     }}
                     dangerouslySetInnerHTML={{
                       __html: product.formatted_price,
