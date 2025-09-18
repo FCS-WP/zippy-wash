@@ -17,7 +17,6 @@ import theme from "../../../theme/customTheme.js";
 
 export default function Cart(props) {
   const { cart, setCart, onUpdateQty, onRemove } = props;
-  const [productAttachs, setProductAttachs] = useState([]);
   const [availableProductInCart, setAvailableProductInCart] = useState();
   const [total, setTotal] = useState(0);
 
@@ -36,7 +35,7 @@ export default function Cart(props) {
   useEffect(() => {
     const total = calculateTotal(cart);
     setTotal(total);
-  }, [cart, productAttachs]);
+  }, [cart]);
 
   const placeOrder = async () => {
     window.location.href = "/checkout";
@@ -46,7 +45,7 @@ export default function Cart(props) {
     return cart
       .reduce((sum, item) => {
         const price = Number(item.price) || 0;
-        const qty = Number(item.qty) || 1;
+        const qty = Number(item.quantity) || 1;
         const lineTotal = price * qty;
         return sum + lineTotal;
       }, 0)

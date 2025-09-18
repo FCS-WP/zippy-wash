@@ -57,7 +57,11 @@ export default function Shop() {
 
               setCart((prevCart) => [
                 ...prevCart,
-                { ...product, qty, cart_item_key: addedProduct?.cart_item_key },
+                {
+                  ...product,
+                  quantity: qty,
+                  cart_item_key: addedProduct?.cart_item_key,
+                },
               ]);
             }
           })();

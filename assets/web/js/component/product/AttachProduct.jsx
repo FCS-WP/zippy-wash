@@ -94,7 +94,16 @@ export default function AttachProduct(props) {
 
               <IconButton
                 size="small"
-                sx={{ color: theme.palette.primary.mainRed }}
+                sx={{
+                  color: theme.palette.primary.mainRed,
+                  "&:focus": {
+                    backgroundColor: "#fff",
+                    color: theme.palette.primary.mainRed,
+                  },
+                  "&:hover": {
+                    backgroundColor: theme.palette.primary.mainRed,
+                  },
+                }}
               >
                 <ArrowForward fontSize="small" />
               </IconButton>
