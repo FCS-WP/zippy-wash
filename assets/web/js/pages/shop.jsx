@@ -88,6 +88,11 @@ export default function Shop() {
   };
 
   const handleUpdateQty = (product, qty) => {
+    if (qty < 1) {
+      handleRemove(product.cart_item_key);
+      return;
+    }
+
     handleUpdateCartItem(product.cart_item_key, qty);
     setCart((prev) =>
       prev
