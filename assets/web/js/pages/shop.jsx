@@ -32,7 +32,7 @@ export default function Shop() {
   }, [selectedCat]);
 
   // Add to cart
-  const handleAddToCart = async (product, qty = 1) => {
+  const handleAddToCart = async (product, quantity = 1) => {
     try {
       setCart((prev) => {
         const exist = prev.find((item) => item.id === product.id);
@@ -46,7 +46,7 @@ export default function Shop() {
           (async () => {
             const res = await webApi.addToCart({
               product_id: product.id,
-              qty,
+              quantity,
             });
 
             if (res?.data?.status == "success") {
@@ -59,7 +59,7 @@ export default function Shop() {
                 ...prevCart,
                 {
                   ...product,
-                  quantity: qty,
+                  quantity,
                   cart_item_key: addedProduct?.cart_item_key,
                 },
               ]);
@@ -74,9 +74,9 @@ export default function Shop() {
     }
   };
 
-  const handleUpdateCartItem = async (cart_item_key, qty) => {
+  const handleUpdateCartItem = async (cart_item_key, quantity) => {
     try {
-      const res = await webApi.updateCartItem({ cart_item_key, qty });
+      const res = await webApi.updateCartItem({ cart_item_key, quantity });
       if (res?.data?.status == "success") {
         document.body.dispatchEvent(
           new Event("wc_fragment_refresh", { bubbles: true })
@@ -87,18 +87,16 @@ export default function Shop() {
     }
   };
 
-  const handleUpdateQty = (product, qty) => {
-    if (qty < 1) {
+  const handleUpdateQty = (product, quantity) => {
+    if (quantity < 1) {
       handleRemove(product.cart_item_key);
       return;
     }
 
-    handleUpdateCartItem(product.cart_item_key, qty);
+    handleUpdateCartItem(product.cart_item_key, quantity);
     setCart((prev) =>
       prev
-        .map((item) =>
-          item.id === product.id ? { ...item, quantity: qty } : item
-        )
+        .map((item) => (item.id === product.id ? { ...item, quantity } : item))
         .filter((item) => item.quantity > 0)
     );
   };
