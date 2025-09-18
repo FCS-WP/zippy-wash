@@ -72,12 +72,7 @@ export default function AttachProduct(props) {
                   variant="subtitle2"
                   fontWeight="bold"
                   sx={{
-                    fontSize: {
-                      xs: "0.5rem",
-                      sm: "0.6rem",
-                      md: "0.7rem",
-                      lg: "0.75rem",
-                    },
+                    fontSize: "0.7rem",
                   }}
                 >
                   {product.name}
@@ -88,12 +83,7 @@ export default function AttachProduct(props) {
                     variant="h6"
                     fontWeight="regular"
                     sx={{
-                      fontSize: {
-                        xs: "0.5rem",
-                        sm: "0.6rem",
-                        md: "0.7rem",
-                        lg: "0.8rem",
-                      },
+                      fontSize: "0.7rem",
                     }}
                     dangerouslySetInnerHTML={{
                       __html: product.formatted_price,

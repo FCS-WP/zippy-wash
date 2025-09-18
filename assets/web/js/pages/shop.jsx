@@ -87,8 +87,10 @@ export default function Shop() {
     handleUpdateCartItem(product.cart_item_key, qty);
     setCart((prev) =>
       prev
-        .map((item) => (item.id === product.id ? { ...item, qty } : item))
-        .filter((item) => item.qty > 0)
+        .map((item) =>
+          item.id === product.id ? { ...item, quantity: qty } : item
+        )
+        .filter((item) => item.quantity > 0)
     );
   };
 
@@ -118,8 +120,8 @@ export default function Shop() {
       sx={{
         bgcolor: "#ffffffff",
         minHeight: "100vh",
-        py: 4,
-        px: { xs: 0, sm: 2, md: 6, lg: 8, xl: 20 },
+        py: { xs: 0, sm: 2, md: 4, lg: 4, xl: 4 },
+        px: { xs: 2, sm: 2, md: 6, lg: 8, xl: 20 },
       }}
     >
       {/* Category */}

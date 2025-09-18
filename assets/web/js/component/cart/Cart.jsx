@@ -112,7 +112,7 @@ export default function Cart(props) {
               >
                 <IconButton
                   size="small"
-                  onClick={() => onUpdateQty(item, item.qty - 1)}
+                  onClick={() => onUpdateQty(item, item.quantity - 1)}
                   sx={{
                     "&:focus": {
                       backgroundColor: theme.palette.primary.mainRed,
@@ -124,10 +124,10 @@ export default function Cart(props) {
                 >
                   <Remove fontSize="small" />
                 </IconButton>
-                <Typography>{item.qty}</Typography>
+                <Typography>{item.quantity}</Typography>
                 <IconButton
                   size="small"
-                  onClick={() => onUpdateQty(item, item.qty + 1)}
+                  onClick={() => onUpdateQty(item, item.quantity + 1)}
                   sx={{
                     "&:focus": {
                       backgroundColor: theme.palette.primary.mainRed,
@@ -169,6 +169,7 @@ export default function Cart(props) {
             Estimated price: ${total}
           </Typography>
           <Button
+            id="schedule-order-button"
             fullWidth
             variant="contained"
             sx={{
