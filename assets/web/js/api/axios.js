@@ -13,7 +13,10 @@ export const makeRequest = async (
     withCredentials: withCredentials,
   });
 
-  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  const headers = {
+    "X-WP-Nonce": admin_data.nonce,
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
 
   const config = {
     url: "/zippy-wash/v1" + endpoint,

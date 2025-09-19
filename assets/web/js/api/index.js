@@ -38,4 +38,35 @@ export const webApi = {
   async removeCartItem(params) {
     return await makeRequest("/zippy-remove-cart-item", params, "POST", true);
   },
+
+  async getCoupons(params) {
+    return await makeRequest("/zippy-get-coupons", params, "GET", true);
+  },
+
+  async applyCouponToCart(params) {
+    return await makeRequest(
+      "/zippy-apply-coupon-to-cart",
+      params,
+      "POST",
+      true
+    );
+  },
+
+  async getCartInfoAppliedCoupon(params) {
+    return await makeRequest(
+      "/zippy-get-cart-info-applied-coupon",
+      params,
+      "GET",
+      true
+    );
+  },
+
+  async removeCoupon(params) {
+    return await makeRequest(
+      "/zippy-remove-coupon-from-cart",
+      params,
+      "POST",
+      true
+    );
+  },
 };

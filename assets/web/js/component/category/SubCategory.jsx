@@ -21,7 +21,7 @@ export default function SubCategory({ id, name, selectedCat, onSelect }) {
         color: theme.palette.text.primary,
         border: isSelected
           ? `2px solid ${theme.palette.primary.mainRed}`
-          : "1px solid #e0e0e0ff",
+          : "2px solid #e0e0e0ff",
         transition: "all 0.2s ease",
         ":hover": {
           bgcolor: "#fcf7f7ff",

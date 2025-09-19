@@ -7,6 +7,7 @@ import CategoryInfo from "../component/category/CategoryInfo.jsx";
 import { webApi } from "../api/index.js";
 import ListSubCategory from "../component/category/ListSubCategory.jsx";
 import AttachProduct from "../component/product/AttachProduct.jsx";
+import CouponList from "../component/coupon/CouponList.jsx";
 
 export default function Shop() {
   const [cart, setCart] = useState([]);
@@ -15,6 +16,8 @@ export default function Shop() {
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
   const [category, setCategory] = useState([]);
   const [productAttachs, setProductAttachs] = useState([]);
+  const [cartAppliedCoupon, setCartAppliedCoupon] = useState(null);
+  const [coupons, setCoupons] = useState([]);
 
   //Set current category
   useEffect(() => {
@@ -31,44 +34,61 @@ export default function Shop() {
     setSelectedSubCategory(null);
   }, [selectedCat]);
 
-  // Add to cart
+  useEffect(() => {
+    getCoupons();
+    getCartInfoAppliedCoupon();
+  }, []);
+
+  const getCoupons = async () => {
+    try {
+      const { data: res } = await webApi.getCoupons({
+        user_id: admin_data.userID,
+      });
+      setCoupons(res.data || []);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  const getCartInfoAppliedCoupon = async () => {
+    const { data: res } = await webApi.getCartInfoAppliedCoupon();
+    if (res.status === "success") {
+      setCartAppliedCoupon(res.data);
+    }
+  };
+
   const handleAddToCart = async (product, quantity = 1) => {
     try {
-      setCart((prev) => {
-        const exist = prev.find((item) => item.id === product.id);
+      const exist = cart.find((item) => item.id === product.id);
 
-        if (exist) {
-          //Re click to remove
-          handleRemove(exist.cart_item_key);
-          return prev.filter((item) => item.id !== product.id);
-        } else {
-          // Add new product to cart
-          (async () => {
-            const res = await webApi.addToCart({
-              product_id: product.id,
+      if (exist) {
+        await handleRemove(exist.cart_item_key);
+        setCart((prev) => prev.filter((item) => item.id !== product.id));
+      } else {
+        const res = await webApi.addToCart({
+          product_id: product.id,
+          quantity,
+        });
+
+        if (res?.data?.status === "success") {
+          const addedProduct = res?.data?.data;
+
+          document.body.dispatchEvent(
+            new Event("wc_fragment_refresh", { bubbles: true })
+          );
+
+          setCart((prevCart) => [
+            ...prevCart,
+            {
+              ...product,
               quantity,
-            });
-
-            if (res?.data?.status == "success") {
-              const addedProduct = res?.data?.data;
-              document.body.dispatchEvent(
-                new Event("wc_fragment_refresh", { bubbles: true })
-              );
-
-              setCart((prevCart) => [
-                ...prevCart,
-                {
-                  ...product,
-                  quantity,
-                  cart_item_key: addedProduct?.cart_item_key,
-                },
-              ]);
-            }
-          })();
-
-          return prev;
+              cart_item_key: addedProduct?.cart_item_key,
+            },
+          ]);
         }
-      });
+      }
+      await getCoupons();
+      await getCartInfoAppliedCoupon();
     } catch (error) {
       console.error("Error adding product:", error);
     }
@@ -162,6 +182,12 @@ export default function Shop() {
             onAddToCart={handleAddToCart}
             cart={cart}
           />
+
+          <CouponList
+            cartAppliedCoupon={cartAppliedCoupon}
+            setCartAppliedCoupon={setCartAppliedCoupon}
+            coupons={coupons}
+          />
         </Grid2>
         <Grid2 size={{ xs: 12, md: 12, lg: 12, xl: 4 }}>
           <Cart
@@ -169,6 +195,7 @@ export default function Shop() {
             onUpdateQty={handleUpdateQty}
             onRemove={handleRemove}
             setCart={setCart}
+            cartAppliedCoupon={cartAppliedCoupon}
           />
         </Grid2>
       </Grid2>

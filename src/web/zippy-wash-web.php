@@ -58,10 +58,9 @@ class ZIPPY_WASH_Web
     wp_enqueue_style('booking-css', ZIPPY_WASH_URL . '/assets/dist/css/web.min.css', [], $version);
     wp_localize_script('booking-js', 'admin_data', array(
       'userID' => $current_user_id,
-      'user_email' => $user_info->user_email
+      'user_email' => $user_info->user_email,
+      'nonce' => wp_create_nonce('wp_rest'),
     ));
-
-
   }
 
   public function zippy_form($atts)
