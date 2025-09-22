@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Stack, Typography, IconButton } from "@mui/material";
 import { Add, Remove, Delete } from "@mui/icons-material";
-import theme from "../../../theme/customTheme"; // nếu bạn có theme custom
+import theme from "../../../theme/customTheme";
 
 export default function CartItem({ item, onUpdateQty, onRemove }) {
   return (
@@ -12,8 +12,20 @@ export default function CartItem({ item, onUpdateQty, onRemove }) {
       sx={{ width: "100%" }}
     >
       {/* Tên sản phẩm */}
-      <Box sx={{ width: 160, flexShrink: 0 }}>
-        <Typography noWrap>{item.name}</Typography>
+      <Box
+        sx={{
+          width: { xs: "100px", sm: "100px", md: "140px", lg: "200px" },
+          flexShrink: 0,
+        }}
+      >
+        <Typography
+          noWrap
+          sx={{
+            fontSize: { xs: "0.7rem", sm: "1rem", md: "1.1rem" },
+          }}
+        >
+          {item.name}
+        </Typography>
       </Box>
 
       {/* Nút +/- số lượng */}
