@@ -13,7 +13,7 @@ export default function VoucherCart({ cartAppliedCoupon }) {
               <Typography variant="body1" sx={{ mb: 0.5 }}>
                 Discount:{" "}
                 <span style={{ color: "#F04150", fontWeight: "bold" }}>
-                  - ${cartAppliedCoupon?.cart_info?.discount_total}
+                  - ${cartAppliedCoupon?.cart_info?.discount_total.toFixed(2)}
                 </span>
               </Typography>
             )}
@@ -22,7 +22,7 @@ export default function VoucherCart({ cartAppliedCoupon }) {
               <Typography variant="body1" sx={{ mb: 0.5 }}>
                 Fee:{" "}
                 <span style={{ color: "#F04150", fontWeight: "bold" }}>
-                  ${cartAppliedCoupon?.cart_info?.fee_total}
+                  ${cartAppliedCoupon?.cart_info?.fee_total.toFixed(2)}
                 </span>
               </Typography>
             )}
