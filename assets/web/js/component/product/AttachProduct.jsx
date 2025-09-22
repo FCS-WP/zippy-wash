@@ -22,10 +22,6 @@ export default function AttachProduct(props) {
     }
   };
 
-  const onRemove = (id) => {
-    setProducts((prev) => prev.filter((p) => p.id !== id));
-  };
-
   return (
     <Box
       sx={{
@@ -76,12 +72,7 @@ export default function AttachProduct(props) {
                   variant="subtitle2"
                   fontWeight="bold"
                   sx={{
-                    fontSize: {
-                      xs: "0.5rem",
-                      sm: "0.6rem",
-                      md: "0.7rem",
-                      lg: "0.75rem",
-                    },
+                    fontSize: "0.7rem",
                   }}
                 >
                   {product.name}
@@ -92,12 +83,7 @@ export default function AttachProduct(props) {
                     variant="h6"
                     fontWeight="regular"
                     sx={{
-                      fontSize: {
-                        xs: "0.5rem",
-                        sm: "0.6rem",
-                        md: "0.7rem",
-                        lg: "0.8rem",
-                      },
+                      fontSize: "0.7rem",
                     }}
                     dangerouslySetInnerHTML={{
                       __html: product.formatted_price,
@@ -108,11 +94,16 @@ export default function AttachProduct(props) {
 
               <IconButton
                 size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onRemove(product.id);
+                sx={{
+                  color: theme.palette.primary.mainRed,
+                  "&:focus": {
+                    backgroundColor: "#fff",
+                    color: theme.palette.primary.mainRed,
+                  },
+                  "&:hover": {
+                    backgroundColor: theme.palette.primary.mainRed,
+                  },
                 }}
-                sx={{ color: theme.palette.primary.mainRed }}
               >
                 <ArrowForward fontSize="small" />
               </IconButton>

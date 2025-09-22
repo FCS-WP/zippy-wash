@@ -32,6 +32,9 @@ const theme = createTheme({
       xl: 1440,
     },
   },
+  typography: {
+    fontFamily: "Plus Jakarta Sans, sans-serif",
+  },
 });
 
 export default theme;

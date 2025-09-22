@@ -25,14 +25,14 @@ class Zippy_Api_Cart_Model
                 },
                 'sanitize_callback' => 'absint',
             ),
-                'qty' => array(
-                    'required' => false,
-                    'default' => 1,
-                    'validate_callback' => function($param, $request, $key) {
-                        return is_numeric($param) && intval($param) > 0;
-                    },
-                    'sanitize_callback' => 'absint',
-                ),
+            'qty' => array(
+                'required' => false,
+                'default' => 1,
+                'validate_callback' => function($param, $request, $key) {
+                    return is_numeric($param) && intval($param) > 0;
+                },
+                'sanitize_callback' => 'absint',
+            ),
         );
     }
 
