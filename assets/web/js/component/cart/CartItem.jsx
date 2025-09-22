@@ -21,7 +21,7 @@ export default function CartItem({ item, onUpdateQty, onRemove }) {
         <Typography
           noWrap
           sx={{
-            fontSize: { xs: "0.7rem", sm: "1rem", md: "1.1rem" },
+            fontSize: { xs: "0.8rem", sm: "1rem", md: "1.1rem" },
           }}
         >
           {item.name}
@@ -46,7 +46,13 @@ export default function CartItem({ item, onUpdateQty, onRemove }) {
           <Remove fontSize="small" />
         </IconButton>
 
-        <Typography>{item.quantity}</Typography>
+        <Typography
+          sx={{
+            fontSize: { xs: "0.8rem", sm: "1rem", md: "1.1rem" },
+          }}
+        >
+          {item.quantity}
+        </Typography>
 
         <IconButton
           size="small"
@@ -68,7 +74,11 @@ export default function CartItem({ item, onUpdateQty, onRemove }) {
         sx={{ width: 120, justifyContent: "flex-end" }}
       >
         <Typography
-          sx={{ textAlign: "right", minWidth: 50 }}
+          sx={{
+            textAlign: "right",
+            minWidth: 50,
+            fontSize: { xs: "0.8rem", sm: "1rem", md: "1.1rem" },
+          }}
           dangerouslySetInnerHTML={{ __html: item.formatted_price }}
         />
         <IconButton
