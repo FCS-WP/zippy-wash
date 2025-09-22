@@ -96,12 +96,14 @@ export default function Shop() {
 
   const handleUpdateCartItem = async (cart_item_key, quantity) => {
     try {
-      const res = await webApi.updateCartItem({ cart_item_key, quantity });
+      const res = await webApi.updateCartItem({ cart_item_key, qty: quantity });
       if (res?.data?.status == "success") {
         document.body.dispatchEvent(
           new Event("wc_fragment_refresh", { bubbles: true })
         );
       }
+      await getCoupons();
+      await getCartInfoAppliedCoupon();
     } catch (error) {
       console.error("Error updating cart item:", error);
     }
@@ -126,6 +128,8 @@ export default function Shop() {
     setCart((prev) =>
       prev.filter((item) => item.cart_item_key !== cart_item_key)
     );
+    await getCoupons();
+    await getCartInfoAppliedCoupon();
   };
 
   const handleRemoveByCartItemKey = async (cart_item_key) => {
