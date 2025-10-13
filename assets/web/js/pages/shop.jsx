@@ -28,11 +28,25 @@ export default function Shop() {
 
     const category = categories.find((cat) => cat.id === selectedCat);
     setCategory(category);
-  }, [selectedCat]);
+  }, [selectedCat, categories]);
 
+  //Choose sub-category from URL query
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const subCategorySlug = params.get("sub-category");
+
+    if (subCategorySlug && category && category.children) {
+      const subCategory = category.children.find(
+        (subCat) => subCat.slug === subCategorySlug
+      );
+      if (subCategory) {
+        setSelectedSubCategory(subCategory.id);
+        return;
+      }
+    }
+
     setSelectedSubCategory(null);
-  }, [selectedCat]);
+  }, [category]);
 
   useEffect(() => {
     getCoupons();
