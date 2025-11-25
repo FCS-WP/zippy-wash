@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API Category Controller
  *
@@ -21,7 +22,7 @@ class Zippy_Category_Controller
     public static function get_categories(WP_REST_Request $request)
     {
         try {
-            $excludeCategory = ['add-on'];
+            $excludeCategory = ['add-on', 'uncategorized'];
             $args = [
                 'taxonomy'   => 'product_cat',
                 'hide_empty' => false,
@@ -47,9 +48,9 @@ class Zippy_Category_Controller
                     'count'       => $term->count,
                     'parent'      => $term->parent,
                     'children'    => [],
-                    'img'         => get_term_meta($term->term_id, 'thumbnail_id', true) 
-                                        ? wp_get_attachment_url(get_term_meta($term->term_id, 'thumbnail_id', true)) 
-                                        : null,
+                    'img'         => get_term_meta($term->term_id, 'thumbnail_id', true)
+                        ? wp_get_attachment_url(get_term_meta($term->term_id, 'thumbnail_id', true))
+                        : null,
                     'order'       => $term->term_order,
                 ];
             }
