@@ -42,7 +42,7 @@ class Zippy_Category_Controller
 
                 $categories[$term->term_id] = [
                     'id'          => $term->term_id,
-                    'name'        => html_entity_decode($term->name),
+                    'name'        => html_entity_decode(self::config_category_name($term->name)),
                     'slug'        => $term->slug,
                     'description' => $term->description,
                     'count'       => $term->count,
@@ -68,5 +68,13 @@ class Zippy_Category_Controller
         } catch (\Exception $e) {
             return Zippy_Response_Handler::error($e->getMessage());
         }
+    }
+
+    private static function config_category_name($name)
+    {
+        $name = preg_replace('/\bDC\b/i', 'Dry Cleaning', $name);
+        $name = preg_replace('/\bLD\b/i', 'Laundry', $name);
+
+        return $name;
     }
 }
