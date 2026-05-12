@@ -4,6 +4,8 @@ import theme from "../../../theme/customTheme";
 
 export default function ProductItem({ product, onAddToCart, cart }) {
   const inCart = cart?.some((item) => item.id === product.id);
+  const isOutOfStock = product.stock_status === "outofstock";
+
   return (
     <Paper
       elevation={0}
@@ -12,15 +14,16 @@ export default function ProductItem({ product, onAddToCart, cart }) {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        bgcolor: "#ffffffff",
-        cursor: "pointer",
+        bgcolor: isOutOfStock ? "#f5f5f5" : "#ffffffff",
+        cursor: isOutOfStock ? "not-allowed" : "pointer",
         border: inCart ? "2px solid #F04150" : "1px solid #e6e6e6ff",
         borderRadius: 2,
-        ":hover": { bgcolor: "#f0f0f0" },
+        ":hover": { bgcolor: isOutOfStock ? "#f5f5f5" : "#f0f0f0" },
         gap: "50px",
         mb: "10px",
+        opacity: isOutOfStock ? 0.7 : 1,
       }}
-      onClick={() => onAddToCart(product)}
+      onClick={() => !isOutOfStock && onAddToCart(product)}
     >
       <Stack direction="row" spacing={2} alignItems="center" gap={2}>
         {/* <Box
@@ -75,14 +78,32 @@ export default function ProductItem({ product, onAddToCart, cart }) {
             </Typography>
           </Tooltip>
 
-          <Typography
-            variant="caption"
-            fontWeight="bold"
-            color={theme.palette.primary.mainRed}
-            sx={{ fontSize: { xs: "0.7rem", sm: "0.8rem", md: "0.85rem" } }}
-          >
-            {product.category_names.join(", ")}
-          </Typography>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography
+              variant="caption"
+              fontWeight="bold"
+              color={theme.palette.primary.mainRed}
+              sx={{ fontSize: { xs: "0.7rem", sm: "0.8rem", md: "0.85rem" } }}
+            >
+              {product.category_names.join(", ")}
+            </Typography>
+            {isOutOfStock && (
+              <Typography
+                variant="caption"
+                fontWeight="bold"
+                sx={{
+                  fontSize: { xs: "0.6rem", sm: "0.7rem" },
+                  color: "#d32f2f",
+                  bgcolor: "#ffebee",
+                  px: 1,
+                  borderRadius: 1,
+                  textTransform: "uppercase",
+                }}
+              >
+                Out of Stock
+              </Typography>
+            )}
+          </Stack>
         </Stack>
       </Stack>
       <Typography
