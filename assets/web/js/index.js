@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <CssBaseline />
         <>Shin</>
         <ToastContainer />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
   }
 
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <CssBaseline />
         <Shop />
         <ToastContainer />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
   }
 });

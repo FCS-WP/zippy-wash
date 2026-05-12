@@ -5,6 +5,7 @@ import ProductList from "../component/product/ProductList.jsx";
 import Cart from "../component/cart/Cart.jsx";
 import CategoryInfo from "../component/category/CategoryInfo.jsx";
 import { webApi } from "../api/index.js";
+import { toast } from "react-toastify";
 import ListSubCategory from "../component/category/ListSubCategory.jsx";
 import AttachProduct from "../component/product/AttachProduct.jsx";
 import CouponList from "../component/coupon/CouponList.jsx";
@@ -99,12 +100,16 @@ export default function Shop() {
               cart_item_key: addedProduct?.cart_item_key,
             },
           ]);
+          toast.success("Added to cart successfully!");
+        } else {
+          toast.error(res?.data?.message || "Failed to add products to cart.");
         }
       }
       await getCoupons();
       await getCartInfoAppliedCoupon();
     } catch (error) {
       console.error("Error adding product:", error);
+      toast.error("An error occurred while adding to cart.");
     }
   };
 
